@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, ShoppingBag } from 'lucide-react'
-import logoOficial from '@/assets/images/logo/logo-oficial.png'
+import logoOficial from '@/assets/logo/logooficial.png'
 
 const navLinks = [
   { to: '/', label: 'Início' },
@@ -37,13 +37,12 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="bg-white rounded-xl p-1 shadow-sm shrink-0">
-              <img
-                src={logoOficial}
-                alt="UMADGOV"
-                className="h-9 md:h-11 w-auto object-contain"
-              />
-            </div>
+            <img
+              src={logoOficial}
+              alt="UMADGOV"
+              className="h-9 md:h-11 w-auto object-contain shrink-0"
+              style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.18))' }}
+            />
             <div className="hidden sm:block">
               <p className={`font-black text-base md:text-lg leading-tight transition-colors ${
                 scrolled || !isHome ? 'text-lavanda-800' : 'text-white'

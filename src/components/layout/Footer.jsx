@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Instagram, Phone, MapPin, Heart, ExternalLink } from 'lucide-react'
-import logoOficial from '@/assets/images/logo/logo-oficial.png'
+import logoOficial from '@/assets/logo/logooficial.png'
 
 export default function Footer() {
   const year = new Date().getFullYear()
@@ -13,9 +13,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="bg-white rounded-xl p-1.5 shrink-0">
-                <img src={logoOficial} alt="UMADGOV" className="h-12 w-auto object-contain" />
-              </div>
+              <img src={logoOficial} alt="UMADGOV" className="h-12 w-auto object-contain shrink-0" />
               <div>
                 <p className="font-black text-xl leading-tight">UMADGOV</p>
                 <p className="text-dourado-400 text-sm font-semibold">2026</p>

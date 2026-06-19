@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { LogOut, ExternalLink } from 'lucide-react'
 import { useAdmin } from '@/context/AdminContext'
-import logoOficial from '@/assets/images/logo/logo-oficial.png'
+import logoOficial from '@/assets/logo/logooficial.png'
 
 export default function AdminLayout({ children }) {
   const { logout } = useAdmin()
@@ -12,9 +12,7 @@ export default function AdminLayout({ children }) {
       <header className="bg-lavanda-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-white rounded-lg p-1">
-              <img src={logoOficial} alt="UMADGOV" className="h-8 w-auto object-contain" />
-            </div>
+            <img src={logoOficial} alt="UMADGOV" className="h-8 w-auto object-contain" />
             <div>
               <span className="font-black text-white">UMADGOV</span>
               <span className="text-lavanda-400 text-sm ml-2">/ Admin</span>

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ShoppingBag, ChevronDown, Star } from 'lucide-react'
 import camisaMockup from '@/assets/images/shirts/camisa-mockup.png'
-import logoOficial from '@/assets/images/logo/logo-oficial.png'
+import logoOficial from '@/assets/logo/logooficial.png'
 
 const stagger = {
   animate: { transition: { staggerChildren: 0.1 } },
@@ -47,13 +47,12 @@ export default function HeroSection() {
           >
             {/* Logo + Event badge */}
             <motion.div variants={fadeUp} className="flex items-center justify-center lg:justify-start gap-3 mb-6">
-              <div className="bg-white rounded-2xl p-1.5 shadow-md">
-                <img
-                  src={logoOficial}
-                  alt="UMADGOV Logo"
-                  className="h-12 w-auto object-contain"
-                />
-              </div>
+              <img
+                src={logoOficial}
+                alt="UMADGOV Logo"
+                className="h-14 w-auto object-contain"
+                style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.25))' }}
+              />
               <div className="bg-white/10 border border-white/20 rounded-full px-4 py-2 flex items-center gap-2">
                 <Star size={13} className="text-dourado-400 fill-dourado-400" />
                 <span className="text-white/90 text-sm font-bold tracking-wide">UMADGOV 2026</span>
