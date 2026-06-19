@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { MessageCircle, X } from 'lucide-react'
 
 const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533999186633'
-const WA_MSG = encodeURIComponent('Olá! Tenho interesse em encomendar a camisa da UMADGOV 2026. 👕')
+const WA_MSG = encodeURIComponent('Olá! Tenho dúvidas em relação a compra das camisas, poderia me ajudar?. ')
 
 export default function WhatsAppButton() {
   const [visible, setVisible] = useState(false)

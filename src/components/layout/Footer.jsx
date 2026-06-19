@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Instagram, Phone, MapPin, Heart } from 'lucide-react'
+import { Instagram, Phone, MapPin, Heart, ExternalLink } from 'lucide-react'
 import logoIcon from '@/assets/images/logo/logo-umadgov-icon.png'
 
 export default function Footer() {
@@ -7,18 +7,13 @@ export default function Footer() {
 
   return (
     <footer className="bg-lavanda-950 text-white">
-      {/* Main footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
           {/* Brand */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <img
-                src={logoIcon}
-                alt="UMADGOV"
-                className="w-12 h-12 object-contain"
-              />
+              <img src={logoIcon} alt="UMADGOV" className="w-12 h-12 object-contain" />
               <div>
                 <p className="font-black text-xl leading-tight">UMADGOV</p>
                 <p className="text-dourado-400 text-sm font-semibold">2026</p>
@@ -44,10 +39,7 @@ export default function Footer() {
                 { to: '/consulta', label: 'Consultar Pedido' },
               ].map(link => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-lavanda-400 hover:text-dourado-400 transition-colors text-sm"
-                  >
+                  <Link to={link.to} className="text-lavanda-400 hover:text-dourado-400 transition-colors text-sm">
                     {link.label}
                   </Link>
                 </li>
@@ -55,7 +47,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Contact + Address */}
           <div>
             <h3 className="font-bold text-white mb-4 text-sm uppercase tracking-wider">Contato</h3>
             <ul className="space-y-3">
@@ -84,11 +76,15 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-2 text-lavanda-400 text-sm">
                 <MapPin size={16} className="text-dourado-400 shrink-0 mt-0.5" />
-                <span>Templo Sede</span>
+                <div>
+                  <p className="text-white font-semibold text-xs mb-0.5">Igreja Evangélica Assembleia de Deus</p>
+                  <p>Rua Afonso Pena, 3384</p>
+                  <p>Centro — Governador Valadares/MG</p>
+                </div>
               </li>
             </ul>
 
-            <div className="mt-6">
+            <div className="mt-5">
               <p className="text-lavanda-500 text-xs mb-1">Prazo de encomenda:</p>
               <p className="text-dourado-400 font-bold">23/09/2026</p>
             </div>
@@ -102,9 +98,21 @@ export default function Footer() {
           <p className="text-lavanda-500 text-xs">
             © {year} UMADGOV — Todos os direitos reservados
           </p>
-          <p className="text-lavanda-600 text-xs flex items-center gap-1">
-            Feito com <Heart size={12} className="text-dourado-500" /> para a glória de Deus
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <p className="text-lavanda-600 text-xs flex items-center gap-1">
+              Feito com <Heart size={12} className="text-dourado-500" /> para a glória de Deus
+            </p>
+            <span className="hidden sm:block text-lavanda-800 text-xs">·</span>
+            <a
+              href="https://diegodev.dev.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lavanda-600 hover:text-lavanda-400 text-xs flex items-center gap-1 transition-colors"
+            >
+              Desenvolvido por Diego Batista Dev. Web
+              <ExternalLink size={10} />
+            </a>
+          </div>
         </div>
       </div>
     </footer>

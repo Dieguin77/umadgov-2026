@@ -77,7 +77,7 @@ export default function ShirtInfoSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           <InfoCard icon={DollarSign} title="Valor por unidade" value="R$ 50,00" accent="gold" delay={0} />
           <InfoCard icon={Calendar} title="Prazo de encomenda" value="23/09/2026" accent="lavanda" delay={0.1} />
-          <InfoCard icon={MapPin} title="Local de retirada" value="Templo Sede" accent="lavanda" delay={0.2} />
+          <InfoCard icon={MapPin} title="Local de retirada" value="Rua Afonso Pena, 3384 — Centro" accent="lavanda" delay={0.2} />
           <InfoCard icon={Ruler} title="Tamanhos disponíveis" value="P · M · G · GG · XG" accent="gold" delay={0.3} />
         </div>
 
@@ -147,7 +147,7 @@ export default function ShirtInfoSection() {
                 { label: 'Estampa Costas', value: 'Pomba com coroa + Geração Eleita' },
                 { label: 'Tamanhos', value: 'P, M, G, GG, XG' },
                 { label: 'Pagamento', value: 'Pix' },
-                { label: 'Retirada', value: 'Templo Sede' },
+                { label: 'Retirada', value: 'Rua Afonso Pena, 3384 — Centro, GV/MG' },
               ].map(item => (
                 <div key={item.label} className="flex items-center justify-between py-2 border-b border-lavanda-100">
                   <span className="text-lavanda-500 text-sm">{item.label}</span>

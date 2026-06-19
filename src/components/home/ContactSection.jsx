@@ -25,7 +25,7 @@ export default function ContactSection() {
           <p className="text-lavanda-500">Dúvidas? Entre em contato pelos nossos canais.</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[
             {
               icon: Instagram,
@@ -36,7 +36,7 @@ export default function ContactSection() {
               delay: 0,
             },
             {
-              icon: Phone,
+              icon: MessageCircle,
               title: 'WhatsApp',
               value: '(33) 99918-6633',
               href: `https://wa.me/${WA_NUMBER}?text=${WA_MSG}`,
@@ -53,9 +53,9 @@ export default function ContactSection() {
             },
             {
               icon: MapPin,
-              title: 'Retirada',
-              value: 'Templo Sede',
-              href: '#',
+              title: 'Local de Retirada',
+              value: 'Templo Sede — Centro',
+              href: 'https://maps.google.com/?q=Rua+Afonso+Pena+3384+Governador+Valadares+MG',
               color: 'bg-dourado-500',
               delay: 0.3,
             },
@@ -80,15 +80,43 @@ export default function ContactSection() {
           ))}
         </div>
 
+        {/* Church address card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="bg-white rounded-2xl p-6 border border-lavanda-100 shadow-sm mb-6"
+        >
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-lavanda-100 flex items-center justify-center shrink-0">
+              <MapPin size={22} className="text-lavanda-600" />
+            </div>
+            <div className="flex-1">
+              <p className="font-black text-lavanda-900 mb-0.5">Igreja Evangélica Assembleia de Deus</p>
+              <p className="text-lavanda-500 text-sm">
+                Rua Afonso Pena, 3384 · Bairro Centro · Governador Valadares/MG
+              </p>
+            </div>
+            <a
+              href="https://maps.google.com/?q=Rua+Afonso+Pena+3384+Governador+Valadares+MG"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 text-xs font-bold text-lavanda-600 hover:text-lavanda-800 border border-lavanda-200 hover:border-lavanda-400 px-3 py-1.5 rounded-lg transition-all"
+            >
+              Ver no mapa
+            </a>
+          </div>
+        </motion.div>
+
         {/* Info bar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-10 bg-white rounded-2xl p-6 border border-lavanda-100 shadow-sm flex flex-wrap justify-center gap-8"
+          transition={{ duration: 0.5, delay: 0.45 }}
+          className="bg-white rounded-2xl p-6 border border-lavanda-100 shadow-sm flex flex-wrap justify-center gap-6 sm:gap-8"
         >
           <div className="flex items-center gap-3">
-            <Clock size={20} className="text-lavanda-500" />
+            <Clock size={20} className="text-lavanda-500 shrink-0" />
             <div>
               <p className="text-xs text-lavanda-400">Prazo de encomenda</p>
               <p className="font-bold text-lavanda-800">Até 23/09/2026</p>
@@ -96,15 +124,15 @@ export default function ContactSection() {
           </div>
           <div className="w-px bg-lavanda-100 hidden sm:block" />
           <div className="flex items-center gap-3">
-            <MapPin size={20} className="text-lavanda-500" />
+            <MapPin size={20} className="text-lavanda-500 shrink-0" />
             <div>
               <p className="text-xs text-lavanda-400">Local de retirada</p>
-              <p className="font-bold text-lavanda-800">Templo Sede</p>
+              <p className="font-bold text-lavanda-800">Templo Sede — Centro</p>
             </div>
           </div>
           <div className="w-px bg-lavanda-100 hidden sm:block" />
           <div className="flex items-center gap-3">
-            <MessageCircle size={20} className="text-green-500" />
+            <MessageCircle size={20} className="text-green-500 shrink-0" />
             <div>
               <p className="text-xs text-lavanda-400">Atendimento via</p>
               <p className="font-bold text-lavanda-800">WhatsApp</p>

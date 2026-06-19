@@ -58,7 +58,7 @@
   }
 
   .text-gradient-lavanda {
-    background: linear-gradient(135deg, #6B5CA5 0%, #8b7ec8 100%);
+    background: linear-gradient(135deg, #585570 0%, #6A6781 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

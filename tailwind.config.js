@@ -8,17 +8,17 @@ export default {
     extend: {
       colors: {
         lavanda: {
-          50:  '#f4f1fb',
-          100: '#e8e3f8',
-          200: '#d4c9f2',
-          300: '#b8a8e8',
-          400: '#9d87db',
-          500: '#8b7ec8',
-          600: '#7B68AE',
-          700: '#6B5CA5',
-          800: '#574a87',
-          900: '#473d6e',
-          950: '#2a2340',
+          50:  '#f5f4f8',
+          100: '#eceaf3',
+          200: '#d8d5e8',
+          300: '#bdbad5',
+          400: '#9e9bbd',
+          500: '#847fa5',
+          600: '#6A6781',
+          700: '#585570',
+          800: '#46445c',
+          900: '#363448',
+          950: '#1d1c2a',
         },
         dourado: {
           50:  '#fdf9e7',
@@ -39,15 +39,15 @@ export default {
         display: ['Outfit', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
-        'gradient-lavanda': 'linear-gradient(135deg, #6B5CA5 0%, #8b7ec8 50%, #9d87db 100%)',
+        'gradient-lavanda': 'linear-gradient(135deg, #585570 0%, #6A6781 50%, #847fa5 100%)',
         'gradient-gold': 'linear-gradient(135deg, #B8960C 0%, #D4AF37 50%, #eeca4a 100%)',
-        'gradient-hero': 'linear-gradient(160deg, #2a2340 0%, #47396e 30%, #6B5CA5 70%, #8b7ec8 100%)',
+        'gradient-hero': 'linear-gradient(160deg, #1d1c2a 0%, #363448 30%, #6A6781 70%, #847fa5 100%)',
       },
       boxShadow: {
         'gold': '0 4px 24px rgba(212, 175, 55, 0.3)',
         'gold-lg': '0 8px 40px rgba(212, 175, 55, 0.4)',
-        'lavanda': '0 4px 24px rgba(107, 92, 165, 0.3)',
-        'lavanda-lg': '0 8px 40px rgba(107, 92, 165, 0.4)',
+        'lavanda': '0 4px 24px rgba(106, 103, 129, 0.3)',
+        'lavanda-lg': '0 8px 40px rgba(106, 103, 129, 0.4)',
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

@@ -1,22 +1,22 @@
 import { motion } from 'framer-motion'
-import { ShoppingBag, Package, Clock, CheckCircle, TrendingUp } from 'lucide-react'
+import { ShoppingBag, Package, Clock, CheckCircle, FileCheck, TrendingUp } from 'lucide-react'
 import { formatCurrency } from '@/utils/formatters'
 
-function StatCard({ icon: Icon, title, value, color, delay, sub }) {
+function StatCard({ icon: Icon, title, value, color, bgLight, delay, sub }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
-      className="bg-white rounded-2xl p-6 border border-lavanda-100 shadow-sm"
+      className="bg-white rounded-2xl p-5 border border-lavanda-100 shadow-sm"
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}>
-          <Icon size={24} className="text-white" />
+      <div className="flex items-start justify-between mb-3">
+        <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${color}`}>
+          <Icon size={22} className="text-white" />
         </div>
       </div>
-      <p className="text-3xl font-black text-lavanda-900 mb-1">{value}</p>
-      <p className="text-lavanda-500 text-sm font-medium">{title}</p>
+      <p className="text-2xl font-black text-lavanda-900 mb-0.5">{value}</p>
+      <p className="text-lavanda-500 text-sm font-medium leading-tight">{title}</p>
       {sub && <p className="text-lavanda-400 text-xs mt-1">{sub}</p>}
     </motion.div>
   )
@@ -25,9 +25,9 @@ function StatCard({ icon: Icon, title, value, color, delay, sub }) {
 export default function DashboardStats({ stats, loading }) {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-white rounded-2xl p-6 border border-lavanda-100 animate-pulse h-36" />
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="bg-white rounded-2xl p-5 border border-lavanda-100 animate-pulse h-32" />
         ))}
       </div>
     )
@@ -36,7 +36,7 @@ export default function DashboardStats({ stats, loading }) {
   if (!stats) return null
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       <StatCard
         icon={ShoppingBag}
         title="Total de pedidos"
@@ -49,24 +49,35 @@ export default function DashboardStats({ stats, loading }) {
         title="Camisas vendidas"
         value={stats.totalVendido}
         color="bg-dourado-500"
-        delay={0.08}
-        sub={`${formatCurrency(stats.receitaTotal)} em receita`}
+        delay={0.06}
       />
       <StatCard
         icon={Clock}
-        title="Pendentes"
-        value={stats.pendentes}
+        title="Aguardando pagamento"
+        value={stats.aguardandoPagamento}
         color="bg-amber-500"
-        delay={0.16}
-        sub="Aguardando ou comprovante"
+        delay={0.12}
+      />
+      <StatCard
+        icon={FileCheck}
+        title="Comprovantes enviados"
+        value={stats.comprovantesEnviados}
+        color="bg-blue-500"
+        delay={0.18}
       />
       <StatCard
         icon={CheckCircle}
-        title="Aprovados"
+        title="Pagamentos aprovados"
         value={stats.aprovados}
-        color="bg-green-500"
+        color="bg-emerald-500"
         delay={0.24}
-        sub="Aprovados, separados ou entregues"
+      />
+      <StatCard
+        icon={TrendingUp}
+        title="Receita total"
+        value={formatCurrency(stats.receitaTotal)}
+        color="bg-violet-600"
+        delay={0.3}
       />
     </div>
   )

@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Eye, Edit, Trash2, ChevronUp, ChevronDown, FileText } from 'lucide-react'
+import { Eye, Edit, Trash2, ChevronUp, ChevronDown, FileText, Receipt } from 'lucide-react'
 import { StatusBadge } from '@/components/ui/Badge'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
 import OrderDetailModal from './OrderDetailModal'
 import EditOrderModal from './EditOrderModal'
+import ComprovanteModal from './ComprovanteModal'
 
 export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateOrder, onDeleteOrder }) {
   const [selected, setSelected] = useState(null)
   const [editing, setEditing] = useState(null)
+  const [viewingComprovante, setViewingComprovante] = useState(null)
   const [sortKey, setSortKey] = useState('createdAt')
   const [sortDir, setSortDir] = useState('desc')
   const [confirmDelete, setConfirmDelete] = useState(null)
@@ -31,9 +33,9 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
       : <ChevronDown size={14} className="opacity-30" />
   )
 
-  const ThSort = ({ col, children }) => (
+  const ThSort = ({ col, children, className = '' }) => (
     <th
-      className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider cursor-pointer hover:text-lavanda-700 select-none"
+      className={`text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider cursor-pointer hover:text-lavanda-700 select-none ${className}`}
       onClick={() => toggleSort(col)}
     >
       <span className="flex items-center gap-1">{children}<SortIcon col={col} /></span>
@@ -64,7 +66,7 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
     <>
       <div className="bg-white rounded-2xl border border-lavanda-100 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[700px]">
             <thead className="bg-lavanda-50 border-b border-lavanda-100">
               <tr>
                 <ThSort col="numeroPedido">Pedido</ThSort>
@@ -73,9 +75,10 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
                 <ThSort col="tamanho">Tam.</ThSort>
                 <ThSort col="quantidade">Qtd</ThSort>
                 <ThSort col="valor">Valor</ThSort>
+                <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden md:table-cell">Comprovante</th>
                 <ThSort col="status">Status</ThSort>
                 <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden lg:table-cell">Data</th>
-                <th className="px-4 py-3" />
+                <th className="px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-lavanda-50">
@@ -104,10 +107,39 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
                     </td>
                     <td className="px-4 py-3 text-lavanda-700 font-semibold text-sm text-center">{order.quantidade}</td>
                     <td className="px-4 py-3 text-dourado-600 font-black text-sm">{formatCurrency(order.valor)}</td>
+
+                    {/* Comprovante column */}
+                    <td className="px-4 py-3 hidden md:table-cell">
+                      {order.comprovante ? (
+                        <button
+                          onClick={() => setViewingComprovante(order)}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-lavanda-600 hover:text-lavanda-800 bg-lavanda-100 hover:bg-lavanda-200 px-3 py-1.5 rounded-lg transition-all"
+                        >
+                          <Receipt size={13} />
+                          Visualizar
+                        </button>
+                      ) : (
+                        <span className="text-lavanda-300 text-xs italic">Não enviado</span>
+                      )}
+                    </td>
+
                     <td className="px-4 py-3"><StatusBadge status={order.status} /></td>
                     <td className="px-4 py-3 hidden lg:table-cell text-lavanda-400 text-xs">{formatDateTime(order.createdAt)}</td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center justify-end gap-1">
+                        {/* Comprovante icon on mobile */}
+                        <button
+                          onClick={() => order.comprovante && setViewingComprovante(order)}
+                          className={`p-1.5 rounded-lg transition-colors md:hidden ${
+                            order.comprovante
+                              ? 'hover:bg-lavanda-100 text-lavanda-500 hover:text-lavanda-700'
+                              : 'text-lavanda-200 cursor-not-allowed'
+                          }`}
+                          title={order.comprovante ? 'Ver comprovante' : 'Comprovante não enviado'}
+                          disabled={!order.comprovante}
+                        >
+                          <Receipt size={15} />
+                        </button>
                         <button
                           onClick={() => setSelected(order)}
                           className="p-1.5 rounded-lg hover:bg-lavanda-100 text-lavanda-500 hover:text-lavanda-700 transition-colors"
@@ -142,6 +174,13 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
           {orders.length} {orders.length === 1 ? 'pedido' : 'pedidos'}
         </div>
       </div>
+
+      {/* Comprovante Modal */}
+      <ComprovanteModal
+        order={viewingComprovante}
+        isOpen={!!viewingComprovante}
+        onClose={() => setViewingComprovante(null)}
+      />
 
       {/* Detail Modal */}
       {selected && (

@@ -150,15 +150,14 @@ export const orderService = {
     const orders = await this.getAllOrders()
     const total = orders.length
     const totalVendido = orders.reduce((s, o) => s + o.quantidade, 0)
-    const pendentes = orders.filter(o =>
-      o.status === STATUS.AGUARDANDO_PAGAMENTO || o.status === STATUS.COMPROVANTE_ENVIADO
-    ).length
+    const aguardandoPagamento = orders.filter(o => o.status === STATUS.AGUARDANDO_PAGAMENTO).length
+    const comprovantesEnviados = orders.filter(o => o.comprovante !== null).length
     const aprovados = orders.filter(o =>
       o.status === STATUS.PAGAMENTO_APROVADO ||
       o.status === STATUS.SEPARADO_RETIRADA ||
       o.status === STATUS.ENTREGUE
     ).length
     const receitaTotal = orders.reduce((s, o) => s + o.valor, 0)
-    return { total, totalVendido, pendentes, aprovados, receitaTotal }
+    return { total, totalVendido, aguardandoPagamento, comprovantesEnviados, aprovados, receitaTotal }
   },
 }
