@@ -18,7 +18,7 @@ export function useOrders(filters = {}) {
     } finally {
       setLoading(false)
     }
-  }, [filters.status, filters.search])
+  }, [filters.status, filters.search, filters.formaPagamento])
 
   useEffect(() => { fetchOrders() }, [fetchOrders])
 

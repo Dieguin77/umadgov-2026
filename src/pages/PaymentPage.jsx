@@ -77,21 +77,37 @@ export default function PaymentPage() {
           <div className="p-6 sm:p-8 space-y-8">
             {/* Payment instructions */}
             <div>
-              <h2 className="text-lg font-bold text-lavanda-900 mb-4">1. Realize o Pix</h2>
+              <h2 className="text-lg font-bold text-lavanda-900 mb-4">
+                {order.formaPagamento === 'pix' ? '1. Realize o PIX' : 'Instruções de Pagamento'}
+              </h2>
               <PaymentInstructions order={order} />
             </div>
 
-            {/* Upload receipt */}
-            <div>
-              <h2 className="text-lg font-bold text-lavanda-900 mb-4">2. Envie o comprovante</h2>
-              <ReceiptUpload
-                order={order}
-                onSuccess={() => {
-                  setUploadDone(true)
-                  setTimeout(() => navigate(`/consulta?pedido=${order.numeroPedido}`), 3000)
-                }}
-              />
-            </div>
+            {/* Upload receipt — only for PIX */}
+            {order.formaPagamento === 'pix' && (
+              <div>
+                <h2 className="text-lg font-bold text-lavanda-900 mb-4">2. Envie o comprovante</h2>
+                <ReceiptUpload
+                  order={order}
+                  onSuccess={() => {
+                    setUploadDone(true)
+                    setTimeout(() => navigate(`/consulta?pedido=${order.numeroPedido}`), 3000)
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Card: CTA to check status */}
+            {(order.formaPagamento === 'credito' || order.formaPagamento === 'debito') && (
+              <div className="text-center pt-2">
+                <Link
+                  to={`/consulta?pedido=${order.numeroPedido}`}
+                  className="inline-flex items-center gap-2 bg-lavanda-600 hover:bg-lavanda-700 text-white font-bold px-6 py-3 rounded-xl transition-colors"
+                >
+                  Acompanhar meu pedido
+                </Link>
+              </div>
+            )}
           </div>
         </motion.div>
 

@@ -12,13 +12,19 @@ export default function AdminPage() {
   const { isAuthenticated, loading: authLoading } = useAdmin()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [paymentFilter, setPaymentFilter] = useState('')
 
-  const filters = { search: search || undefined, status: statusFilter || undefined }
+  const filters = {
+    search: search || undefined,
+    status: statusFilter || undefined,
+    formaPagamento: paymentFilter || undefined,
+  }
   const { orders, loading, updateStatus, updateOrder, deleteOrder } = useOrders(filters)
   const { stats, loading: statsLoading } = useDashboardStats()
 
   const handleSearch = useCallback((val) => setSearch(val), [])
   const handleStatusFilter = useCallback((val) => setStatusFilter(val), [])
+  const handlePaymentFilter = useCallback((val) => setPaymentFilter(val), [])
 
   if (authLoading) {
     return (
@@ -58,7 +64,11 @@ export default function AdminPage() {
             <h2 className="text-xl font-bold text-lavanda-900">Pedidos</h2>
           </div>
 
-          <SearchBar onSearch={handleSearch} onStatusFilter={handleStatusFilter} />
+          <SearchBar
+            onSearch={handleSearch}
+            onStatusFilter={handleStatusFilter}
+            onPaymentFilter={handlePaymentFilter}
+          />
 
           <OrdersTable
             orders={orders}

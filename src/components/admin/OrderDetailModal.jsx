@@ -6,6 +6,7 @@ import { STATUS, STATUS_LABELS } from '@/data/mockOrders'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
 import { Eye, Check, Receipt } from 'lucide-react'
 import ComprovanteModal from './ComprovanteModal'
+import { FORMA_PAGAMENTO_LABELS } from '@/data/mockOrders'
 
 export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatus }) {
   const [newStatus, setNewStatus] = useState(order?.status || '')
@@ -47,6 +48,7 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
               { label: 'Tamanho', value: order.tamanho },
               { label: 'Quantidade', value: `${order.quantidade}x` },
               { label: 'Valor Total', value: formatCurrency(order.valor) },
+              { label: 'Forma de Pagamento', value: FORMA_PAGAMENTO_LABELS[order.formaPagamento] || '—' },
             ].map(item => (
               <div key={item.label} className="bg-gray-50 rounded-xl p-3">
                 <p className="text-xs text-lavanda-400 mb-1">{item.label}</p>

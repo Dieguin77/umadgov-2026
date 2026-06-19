@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Search, ArrowLeft, Package, CheckCircle, Clock, Truck, Star } from 'lucide-react'
 import { orderService } from '@/services/orderService'
-import { STATUS, STATUS_LABELS, STATUS_COLORS } from '@/data/mockOrders'
+import { STATUS, STATUS_LABELS, STATUS_COLORS, FORMA_PAGAMENTO_LABELS } from '@/data/mockOrders'
 import { StatusBadge } from '@/components/ui/Badge'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
 import Button from '@/components/ui/Button'
@@ -162,6 +162,7 @@ export default function OrderStatusPage() {
                     { l: 'Quantidade', v: `${order.quantidade}x` },
                     { l: 'Valor', v: formatCurrency(order.valor) },
                     { l: 'Congregação', v: order.congregacao },
+                    { l: 'Pagamento', v: FORMA_PAGAMENTO_LABELS[order.formaPagamento] || 'PIX' },
                     { l: 'Data', v: formatDateTime(order.createdAt) },
                   ].map(item => (
                     <div key={item.l} className="bg-gray-50 rounded-xl p-3">
@@ -177,8 +178,8 @@ export default function OrderStatusPage() {
                   <StatusTimeline currentStatus={order.status} />
                 </div>
 
-                {/* CTA: send receipt if waiting */}
-                {order.status === STATUS.AGUARDANDO_PAGAMENTO && (
+                {/* CTA: send receipt if waiting — only for PIX */}
+                {order.status === STATUS.AGUARDANDO_PAGAMENTO && order.formaPagamento === 'pix' && (
                   <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                     <p className="text-amber-700 text-sm font-semibold mb-2">Pagamento pendente</p>
                     <p className="text-amber-600 text-sm mb-3">
@@ -190,6 +191,15 @@ export default function OrderStatusPage() {
                     >
                       Enviar comprovante
                     </Link>
+                  </div>
+                )}
+
+                {order.status === STATUS.AGUARDANDO_PAGAMENTO && (order.formaPagamento === 'credito' || order.formaPagamento === 'debito') && (
+                  <div className="bg-lavanda-50 border border-lavanda-200 rounded-xl p-4">
+                    <p className="text-lavanda-700 text-sm font-semibold mb-1">Pagamento na retirada</p>
+                    <p className="text-lavanda-500 text-sm">
+                      O pagamento por {order.formaPagamento === 'credito' ? 'cartão de crédito' : 'cartão de débito'} será realizado presencialmente no momento da retirada.
+                    </p>
                   </div>
                 )}
 

@@ -1,10 +1,11 @@
 import { Search, X } from 'lucide-react'
 import { useState } from 'react'
-import { STATUS, STATUS_LABELS } from '@/data/mockOrders'
+import { STATUS, STATUS_LABELS, FORMA_PAGAMENTO_LABELS } from '@/data/mockOrders'
 
-export default function SearchBar({ onSearch, onStatusFilter }) {
+export default function SearchBar({ onSearch, onStatusFilter, onPaymentFilter }) {
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState('')
+  const [payment, setPayment] = useState('')
 
   const handleSearch = (val) => {
     setSearch(val)
@@ -16,18 +17,25 @@ export default function SearchBar({ onSearch, onStatusFilter }) {
     onStatusFilter(val)
   }
 
+  const handlePayment = (val) => {
+    setPayment(val)
+    onPaymentFilter?.(val)
+  }
+
   const clear = () => {
     setSearch('')
     setStatus('')
+    setPayment('')
     onSearch('')
     onStatusFilter('')
+    onPaymentFilter?.('')
   }
 
-  const hasFilters = search || status
+  const hasFilters = search || status || payment
 
   return (
     <div className="flex flex-wrap gap-3 items-center">
-      <div className="relative flex-1 min-w-[200px]">
+      <div className="relative flex-1 min-w-[180px]">
         <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-lavanda-400" />
         <input
           value={search}
@@ -44,6 +52,17 @@ export default function SearchBar({ onSearch, onStatusFilter }) {
       >
         <option value="">Todos os status</option>
         {Object.entries(STATUS_LABELS).map(([val, label]) => (
+          <option key={val} value={val}>{label}</option>
+        ))}
+      </select>
+
+      <select
+        value={payment}
+        onChange={(e) => handlePayment(e.target.value)}
+        className="px-4 py-2.5 rounded-xl border-2 border-lavanda-200 focus:border-lavanda-500 focus:outline-none text-sm transition-all appearance-none cursor-pointer bg-white"
+      >
+        <option value="">Todas as formas</option>
+        {Object.entries(FORMA_PAGAMENTO_LABELS).map(([val, label]) => (
           <option key={val} value={val}>{label}</option>
         ))}
       </select>

@@ -20,7 +20,9 @@ export const orderService = {
       numeroPedido,
       valor,
       status: STATUS.AGUARDANDO_PAGAMENTO,
+      formaPagamento: data.formaPagamento || 'pix',
       comprovante: null,
+      comprovanteAt: null,
       createdAt: new Date().toISOString(),
     }
 
@@ -89,6 +91,9 @@ export const orderService = {
         o.congregacao.toLowerCase().includes(s) ||
         o.telefone.includes(s)
       )
+    }
+    if (filters.formaPagamento) {
+      orders = orders.filter(o => o.formaPagamento === filters.formaPagamento)
     }
     return orders
   },

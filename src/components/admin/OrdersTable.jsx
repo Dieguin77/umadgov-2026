@@ -1,11 +1,29 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Eye, Edit, Trash2, ChevronUp, ChevronDown, FileText, Receipt } from 'lucide-react'
+import { Eye, Edit, Trash2, ChevronUp, ChevronDown, FileText, Receipt, Smartphone, CreditCard } from 'lucide-react'
 import { StatusBadge } from '@/components/ui/Badge'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
+import { FORMA_PAGAMENTO_LABELS } from '@/data/mockOrders'
 import OrderDetailModal from './OrderDetailModal'
 import EditOrderModal from './EditOrderModal'
 import ComprovanteModal from './ComprovanteModal'
+
+const PAYMENT_BADGES = {
+  pix:     { label: 'PIX',     Icon: Smartphone, cls: 'bg-green-100 text-green-700' },
+  credito: { label: 'Crédito', Icon: CreditCard, cls: 'bg-blue-100 text-blue-700' },
+  debito:  { label: 'Débito',  Icon: CreditCard, cls: 'bg-violet-100 text-violet-700' },
+}
+
+function PaymentBadge({ forma }) {
+  const b = PAYMENT_BADGES[forma]
+  if (!b) return <span className="text-lavanda-300 text-xs italic">—</span>
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold ${b.cls}`}>
+      <b.Icon size={11} />
+      {b.label}
+    </span>
+  )
+}
 
 export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateOrder, onDeleteOrder }) {
   const [selected, setSelected] = useState(null)
@@ -75,6 +93,7 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
                 <ThSort col="tamanho">Tam.</ThSort>
                 <ThSort col="quantidade">Qtd</ThSort>
                 <ThSort col="valor">Valor</ThSort>
+                <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden sm:table-cell">Pagamento</th>
                 <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden md:table-cell">Comprovante</th>
                 <ThSort col="status">Status</ThSort>
                 <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden lg:table-cell">Data</th>
@@ -107,6 +126,11 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
                     </td>
                     <td className="px-4 py-3 text-lavanda-700 font-semibold text-sm text-center">{order.quantidade}</td>
                     <td className="px-4 py-3 text-dourado-600 font-black text-sm">{formatCurrency(order.valor)}</td>
+
+                    {/* Forma de pagamento column */}
+                    <td className="px-4 py-3 hidden sm:table-cell">
+                      <PaymentBadge forma={order.formaPagamento} />
+                    </td>
 
                     {/* Comprovante column */}
                     <td className="px-4 py-3 hidden md:table-cell">

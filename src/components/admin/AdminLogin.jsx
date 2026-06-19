@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Lock, Eye, EyeOff } from 'lucide-react'
 import { useAdmin } from '@/context/AdminContext'
-import Input from '@/components/ui/Input'
-import logoIcon from '@/assets/images/logo/logo-umadgov-icon.png'
+import logoOficial from '@/assets/images/logo/logo-oficial.png'
 import Button from '@/components/ui/Button'
 import toast from 'react-hot-toast'
 
@@ -35,11 +34,13 @@ export default function AdminLogin() {
       >
         {/* Logo */}
         <div className="text-center mb-8">
-          <img
-            src={logoIcon}
-            alt="UMADGOV"
-            className="w-16 h-16 object-contain mx-auto mb-4"
-          />
+          <div className="inline-block bg-lavanda-50 rounded-2xl p-3 mb-4">
+            <img
+              src={logoOficial}
+              alt="UMADGOV"
+              className="h-20 w-auto object-contain mx-auto"
+            />
+          </div>
           <h1 className="text-2xl font-black text-lavanda-900">Admin</h1>
           <p className="text-lavanda-400 text-sm mt-1">UMADGOV 2026</p>
         </div>
