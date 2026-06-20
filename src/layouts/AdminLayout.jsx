@@ -1,10 +1,16 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { LogOut, ExternalLink } from 'lucide-react'
-import { useAdmin } from '@/context/AdminContext'
+import { useAuth } from '@/context/AuthContext'
 import logoOficial from '@/assets/logo/logooficial.png'
 
 export default function AdminLayout({ children }) {
-  const { logout } = useAdmin()
+  const { signOut, profile } = useAuth()
+  const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    await signOut()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <div className="min-h-screen bg-lavanda-50">
@@ -20,6 +26,11 @@ export default function AdminLayout({ children }) {
           </div>
 
           <div className="flex items-center gap-3">
+            {profile?.nome && (
+              <span className="text-lavanda-400 text-sm hidden sm:block">
+                {profile.nome}
+              </span>
+            )}
             <Link
               to="/"
               target="_blank"
@@ -29,7 +40,7 @@ export default function AdminLayout({ children }) {
               Ver site
             </Link>
             <button
-              onClick={logout}
+              onClick={handleSignOut}
               className="flex items-center gap-2 bg-lavanda-700 hover:bg-lavanda-600 px-4 py-2 rounded-lg text-sm font-semibold transition-colors"
             >
               <LogOut size={15} />

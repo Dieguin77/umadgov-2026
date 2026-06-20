@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
-import { AdminProvider } from '@/context/AdminContext'
+import { AuthProvider } from '@/context/AuthContext'
 import { OrderProvider } from '@/context/OrderContext'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
 import MainLayout from '@/layouts/MainLayout'
 import HomePage from '@/pages/HomePage'
 import OrderPage from '@/pages/OrderPage'
@@ -13,7 +14,7 @@ import LoginPage from '@/pages/LoginPage'
 export default function App() {
   return (
     <BrowserRouter>
-      <AdminProvider>
+      <AuthProvider>
         <OrderProvider>
           <Toaster
             position="top-right"
@@ -46,10 +47,18 @@ export default function App() {
             </Route>
 
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/admin" element={<AdminPage />} />
+
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </OrderProvider>
-      </AdminProvider>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

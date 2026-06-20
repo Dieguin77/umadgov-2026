@@ -8,7 +8,14 @@ export const isSupabaseConfigured =
   supabaseAnonKey && supabaseAnonKey !== ''
 
 export const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storageKey: 'umadgov_auth_v2',
+      },
+    })
   : null
 
 export const STORAGE_BUCKET = 'comprovantes'

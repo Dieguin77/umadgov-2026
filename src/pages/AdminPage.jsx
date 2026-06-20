@@ -1,15 +1,12 @@
 import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import AdminLayout from '@/layouts/AdminLayout'
-import AdminLogin from '@/components/admin/AdminLogin'
 import DashboardStats from '@/components/admin/DashboardStats'
 import OrdersTable from '@/components/admin/OrdersTable'
 import SearchBar from '@/components/admin/SearchBar'
-import { useAdmin } from '@/context/AdminContext'
 import { useOrders, useDashboardStats } from '@/hooks/useOrders'
 
 export default function AdminPage() {
-  const { isAuthenticated, loading: authLoading } = useAdmin()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [paymentFilter, setPaymentFilter] = useState('')
@@ -25,18 +22,6 @@ export default function AdminPage() {
   const handleSearch = useCallback((val) => setSearch(val), [])
   const handleStatusFilter = useCallback((val) => setStatusFilter(val), [])
   const handlePaymentFilter = useCallback((val) => setPaymentFilter(val), [])
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-lavanda-200 border-t-lavanda-600 rounded-full animate-spin" />
-      </div>
-    )
-  }
-
-  if (!isAuthenticated) {
-    return <AdminLogin />
-  }
 
   return (
     <AdminLayout>
