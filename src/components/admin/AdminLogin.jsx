@@ -52,15 +52,24 @@ export default function AdminLogin() {
       }
 
       // 2. Verificar role na tabela profiles
+      const userId = authData.user.id
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('role, nome')
-        .eq('id', authData.user.id)
-        .single()
+        .eq('id', userId)
+        .maybeSingle()
 
-      if (profileError || !profileData) {
+      if (profileError) {
+        console.error('[AdminLogin] profileError:', profileError.code, profileError.message, 'userId:', userId)
         await supabase.auth.signOut()
-        setError('Perfil não encontrado. Contate o administrador.')
+        setError('Erro ao verificar permissões. Contate o suporte.')
+        return
+      }
+
+      if (!profileData) {
+        console.error('[AdminLogin] Profile não encontrado para userId:', userId)
+        await supabase.auth.signOut()
+        setError('Perfil não encontrado. Execute o script supabase-fix.sql para corrigir o UUID.')
         return
       }
 

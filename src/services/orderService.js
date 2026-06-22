@@ -6,17 +6,36 @@ import { SHIRT_PRICE } from '@/data/mockOrders'
 let localOrders = [...mockOrders]
 let nextOrderIndex = mockOrders.length + 1
 
-const getNextOrderNumber = () => {
-  const num = nextOrderIndex++
-  return generateOrderNumber(num)
-}
-
 export const orderService = {
   async createOrder(data) {
-    const numeroPedido = getNextOrderNumber()
     const valor = data.quantidade * SHIRT_PRICE
-    const newOrder = {
+
+    if (isSupabaseConfigured) {
+      const { data: created, error } = await supabase
+        .from('pedidos')
+        .insert([{
+          nome: data.nome,
+          telefone: data.telefone,
+          congregacao: data.congregacao,
+          tamanho: data.tamanho,
+          quantidade: data.quantidade,
+          valor,
+          status: STATUS.AGUARDANDO_PAGAMENTO,
+          formaPagamento: data.formaPagamento || 'pix',
+          comprovante: null,
+          comprovanteAt: null,
+          observacoes: data.observacoes || null,
+        }])
+        .select()
+        .single()
+      if (error) throw error
+      return created
+    }
+
+    const numeroPedido = generateOrderNumber(nextOrderIndex++)
+    const order = {
       ...data,
+      id: `order_${Date.now()}_${Math.random().toString(36).slice(2,9)}`,
       numeroPedido,
       valor,
       status: STATUS.AGUARDANDO_PAGAMENTO,
@@ -25,18 +44,6 @@ export const orderService = {
       comprovanteAt: null,
       createdAt: new Date().toISOString(),
     }
-
-    if (isSupabaseConfigured) {
-      const { data: created, error } = await supabase
-        .from('pedidos')
-        .insert([{ ...newOrder, id: undefined }])
-        .select()
-        .single()
-      if (error) throw error
-      return created
-    }
-
-    const order = { ...newOrder, id: `order_${Date.now()}_${Math.random().toString(36).slice(2,9)}` }
     localOrders.push(order)
     return order
   },
@@ -71,6 +78,7 @@ export const orderService = {
     if (isSupabaseConfigured) {
       let query = supabase.from('pedidos').select('*').order('createdAt', { ascending: false })
       if (filters.status) query = query.eq('status', filters.status)
+      if (filters.formaPagamento) query = query.eq('formaPagamento', filters.formaPagamento)
       if (filters.search) {
         query = query.or(
           `nome.ilike.%${filters.search}%,numeroPedido.ilike.%${filters.search}%,congregacao.ilike.%${filters.search}%`
@@ -147,6 +155,7 @@ export const orderService = {
   async updateComprovante(id, comprovantePath) {
     return this.updateOrder(id, {
       comprovante: comprovantePath,
+      comprovanteAt: new Date().toISOString(),
       status: STATUS.COMPROVANTE_ENVIADO,
     })
   },
