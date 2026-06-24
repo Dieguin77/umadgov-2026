@@ -4,7 +4,7 @@ Sistema Web desenvolvido para a UMADGOV 2026, oferecendo gerenciamento e organiz
 
 ---
 
-## 🛠 Tecnologias
+##  Tecnologias
 
 - React
 - JavaScript
@@ -17,7 +17,7 @@ Sistema Web desenvolvido para a UMADGOV 2026, oferecendo gerenciamento e organiz
 
 ---
 
-## ✨ Funcionalidades
+## Funcionalidades
 
 - Área administrativa
 - Login de usuários
