@@ -1,4 +1,4 @@
-** UMADGOV 2026**:
+UMADGOV 2026
 
 Sistema Web desenvolvido para a UMADGOV 2026, oferecendo gerenciamento e organização de informações através de uma interface moderna e responsiva.
 
