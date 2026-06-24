@@ -27,13 +27,13 @@ Sistema Web desenvolvido para a UMADGOV 2026, oferecendo gerenciamento e organiz
 
 ---
 
-## 🌐 Projeto Online
+##  Projeto Online
 
 https://umadgov-2026.vercel.app
 
 ---
 
-## 👨‍💻 Desenvolvedor
+##  Desenvolvedor
 
 **Diego Batista Gomes Moraes**
 
