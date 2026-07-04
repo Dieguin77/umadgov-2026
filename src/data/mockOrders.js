@@ -29,14 +29,10 @@ export const SHIRT_PRICE = 50
 
 export const FORMA_PAGAMENTO = {
   PIX: 'pix',
-  CREDITO: 'credito',
-  DEBITO: 'debito',
 }
 
 export const FORMA_PAGAMENTO_LABELS = {
   pix: 'PIX',
-  credito: 'Cartão de Crédito',
-  debito: 'Cartão de Débito',
 }
 
 export const mockOrders = [
@@ -80,7 +76,7 @@ export const mockOrders = [
     quantidade: 3,
     valor: 150,
     status: STATUS.AGUARDANDO_PAGAMENTO,
-    formaPagamento: 'credito',
+    formaPagamento: 'pix',
     comprovante: null,
     comprovanteAt: null,
     createdAt: '2026-06-03T16:45:00.000Z',
@@ -95,7 +91,7 @@ export const mockOrders = [
     quantidade: 2,
     valor: 100,
     status: STATUS.SEPARADO_RETIRADA,
-    formaPagamento: 'debito',
+    formaPagamento: 'pix',
     comprovante: 'comprovantes/UMD-2026-0004-pix.pdf',
     comprovanteAt: '2026-06-04T11:00:00.000Z',
     createdAt: '2026-06-04T10:00:00.000Z',
@@ -140,7 +136,7 @@ export const mockOrders = [
     quantidade: 1,
     valor: 50,
     status: STATUS.PAGAMENTO_APROVADO,
-    formaPagamento: 'credito',
+    formaPagamento: 'pix',
     comprovante: 'comprovantes/UMD-2026-0007-pix.png',
     comprovanteAt: '2026-06-07T12:00:00.000Z',
     createdAt: '2026-06-07T11:10:00.000Z',
@@ -155,7 +151,7 @@ export const mockOrders = [
     quantidade: 2,
     valor: 100,
     status: STATUS.COMPROVANTE_ENVIADO,
-    formaPagamento: 'debito',
+    formaPagamento: 'pix',
     comprovante: 'comprovantes/UMD-2026-0008-pix.jpg',
     comprovanteAt: '2026-06-08T16:00:00.000Z',
     createdAt: '2026-06-08T15:00:00.000Z',

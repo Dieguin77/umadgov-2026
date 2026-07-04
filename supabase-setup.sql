@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS public.pedidos (
                        'entregue'
                      )),
   "formaPagamento" TEXT NOT NULL DEFAULT 'pix'
-                     CHECK ("formaPagamento" IN ('pix', 'credito', 'debito')),
+                     CHECK ("formaPagamento" IN ('pix')),
   comprovante      TEXT,
   "comprovanteAt"  TIMESTAMPTZ,
   observacoes      TEXT,

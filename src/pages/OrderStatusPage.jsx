@@ -194,15 +194,6 @@ export default function OrderStatusPage() {
                   </div>
                 )}
 
-                {order.status === STATUS.AGUARDANDO_PAGAMENTO && (order.formaPagamento === 'credito' || order.formaPagamento === 'debito') && (
-                  <div className="bg-lavanda-50 border border-lavanda-200 rounded-xl p-4">
-                    <p className="text-lavanda-700 text-sm font-semibold mb-1">Pagamento na retirada</p>
-                    <p className="text-lavanda-500 text-sm">
-                      O pagamento por {order.formaPagamento === 'credito' ? 'cartão de crédito' : 'cartão de débito'} será realizado presencialmente no momento da retirada.
-                    </p>
-                  </div>
-                )}
-
                 {order.status === STATUS.ENTREGUE && (
                   <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
                     <p className="text-2xl mb-2">🎉</p>

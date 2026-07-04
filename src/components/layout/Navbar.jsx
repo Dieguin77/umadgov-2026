@@ -40,7 +40,7 @@ export default function Navbar() {
             <img
               src={logoOficial}
               alt="UMADGOV"
-              className="h-9 md:h-11 w-auto object-contain shrink-0"
+              className="h-11 md:h-14 w-auto object-contain shrink-0"
               style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.18))' }}
             />
             <div className="hidden sm:block">

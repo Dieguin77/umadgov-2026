@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
-import { User, Phone, Church, Ruler, Hash, ShoppingBag, Smartphone, CreditCard, Check } from 'lucide-react'
+import { User, Phone, Church, Ruler, Hash, ShoppingBag, Smartphone } from 'lucide-react'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
@@ -10,36 +10,6 @@ import { formatPhoneInput, formatCurrency } from '@/utils/formatters'
 import { orderService } from '@/services/orderService'
 import { SHIRT_SIZES, SHIRT_PRICE } from '@/data/mockOrders'
 import toast from 'react-hot-toast'
-
-const PAYMENT_OPTIONS = [
-  {
-    value: 'pix',
-    label: 'PIX',
-    icon: Smartphone,
-    desc: 'Pague online agora',
-    color: 'text-green-600',
-    bg: 'bg-green-50',
-    border: 'border-green-500',
-  },
-  {
-    value: 'credito',
-    label: 'Crédito',
-    icon: CreditCard,
-    desc: 'Pague na retirada',
-    color: 'text-blue-600',
-    bg: 'bg-blue-50',
-    border: 'border-blue-500',
-  },
-  {
-    value: 'debito',
-    label: 'Débito',
-    icon: CreditCard,
-    desc: 'Pague na retirada',
-    color: 'text-violet-600',
-    bg: 'bg-violet-50',
-    border: 'border-violet-500',
-  },
-]
 
 export default function OrderForm({ onSuccess }) {
   const [loading, setLoading] = useState(false)
@@ -51,11 +21,10 @@ export default function OrderForm({ onSuccess }) {
     setValue,
     formState: { errors },
   } = useForm({
-    defaultValues: { quantidade: 1, tamanho: '', observacoes: '', formaPagamento: '' },
+    defaultValues: { quantidade: 1, tamanho: '', observacoes: '' },
   })
 
   const quantidade = Number(watch('quantidade') || 1)
-  const formaPagamento = watch('formaPagamento')
   const total = quantidade * SHIRT_PRICE
 
   const handlePhoneInput = (e) => {
@@ -71,7 +40,7 @@ export default function OrderForm({ onSuccess }) {
         congregacao: data.congregacao.trim(),
         tamanho: data.tamanho,
         quantidade: Number(data.quantidade),
-        formaPagamento: data.formaPagamento,
+        formaPagamento: 'pix',
         observacoes: data.observacoes?.trim() || null,
       })
       toast.success('Pedido criado com sucesso!')
@@ -154,57 +123,15 @@ export default function OrderForm({ onSuccess }) {
       {/* Payment method */}
       <div>
         <label className="text-sm font-semibold text-lavanda-900 block mb-3">
-          Forma de Pagamento <span className="text-red-500">*</span>
+          Forma de Pagamento
         </label>
-        <div className="grid grid-cols-3 gap-3">
-          {PAYMENT_OPTIONS.map(opt => {
-            const selected = formaPagamento === opt.value
-            return (
-              <label
-                key={opt.value}
-                className={`relative flex flex-col items-center gap-2 p-3 sm:p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                  selected
-                    ? `${opt.border} ${opt.bg}`
-                    : 'border-lavanda-100 hover:border-lavanda-300 bg-white'
-                }`}
-              >
-                <input
-                  type="radio"
-                  value={opt.value}
-                  {...register('formaPagamento', { required: 'Selecione a forma de pagamento' })}
-                  className="sr-only"
-                />
-                <opt.icon
-                  size={22}
-                  className={selected ? opt.color : 'text-lavanda-300'}
-                />
-                <span className={`font-bold text-sm ${selected ? 'text-lavanda-900' : 'text-lavanda-500'}`}>
-                  {opt.label}
-                </span>
-                <span className={`text-xs text-center leading-tight ${selected ? 'text-lavanda-600' : 'text-lavanda-400'}`}>
-                  {opt.desc}
-                </span>
-                {selected && (
-                  <div className={`absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center ${opt.border.replace('border-', 'bg-')}`}>
-                    <Check size={11} className="text-white" />
-                  </div>
-                )}
-              </label>
-            )
-          })}
+        <div className="flex items-center gap-3 p-4 rounded-xl border-2 border-green-500 bg-green-50">
+          <Smartphone size={22} className="text-green-600" />
+          <div>
+            <p className="font-bold text-sm text-lavanda-900">PIX</p>
+            <p className="text-xs text-lavanda-600">Pague online agora</p>
+          </div>
         </div>
-        {errors.formaPagamento && (
-          <p className="text-red-500 text-xs mt-1.5">{errors.formaPagamento.message}</p>
-        )}
-        {(formaPagamento === 'credito' || formaPagamento === 'debito') && (
-          <motion.p
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-2 text-xs text-lavanda-500 bg-lavanda-50 border border-lavanda-100 rounded-lg px-3 py-2"
-          >
-            O pagamento por cartão será realizado presencialmente no momento da retirada.
-          </motion.p>
-        )}
       </div>
 
       {/* Order Summary */}
@@ -224,25 +151,16 @@ export default function OrderForm({ onSuccess }) {
             <span className="text-lavanda-500">Quantidade</span>
             <span className="text-lavanda-700">{quantidade} {quantidade === 1 ? 'camisa' : 'camisas'}</span>
           </div>
-          {formaPagamento && (
-            <div className="flex justify-between text-sm">
-              <span className="text-lavanda-500">Pagamento</span>
-              <span className="text-lavanda-700">
-                {formaPagamento === 'pix' ? 'PIX' : formaPagamento === 'credito' ? 'Cartão de Crédito' : 'Cartão de Débito'}
-              </span>
-            </div>
-          )}
+          <div className="flex justify-between text-sm">
+            <span className="text-lavanda-500">Pagamento</span>
+            <span className="text-lavanda-700">PIX</span>
+          </div>
           <div className="border-t border-lavanda-200 pt-2 flex justify-between font-black text-lg">
             <span className="text-lavanda-800">Total</span>
             <span className="text-dourado-600">{formatCurrency(total)}</span>
           </div>
         </div>
-        {formaPagamento === 'pix' && (
-          <p className="text-lavanda-400 text-xs">Após o pedido você receberá as instruções de pagamento via Pix</p>
-        )}
-        {(formaPagamento === 'credito' || formaPagamento === 'debito') && (
-          <p className="text-lavanda-400 text-xs">Pagamento presencial no momento da retirada</p>
-        )}
+        <p className="text-lavanda-400 text-xs">Após o pedido você receberá as instruções de pagamento via Pix</p>
       </motion.div>
 
       <Button

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Eye, Edit, Trash2, ChevronUp, ChevronDown, FileText, Receipt, Smartphone, CreditCard } from 'lucide-react'
+import { Eye, Edit, Trash2, ChevronUp, ChevronDown, FileText, Receipt, Smartphone } from 'lucide-react'
 import { StatusBadge } from '@/components/ui/Badge'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
 import { FORMA_PAGAMENTO_LABELS } from '@/data/mockOrders'
@@ -9,9 +9,7 @@ import EditOrderModal from './EditOrderModal'
 import ComprovanteModal from './ComprovanteModal'
 
 const PAYMENT_BADGES = {
-  pix:     { label: 'PIX',     Icon: Smartphone, cls: 'bg-green-100 text-green-700' },
-  credito: { label: 'Crédito', Icon: CreditCard, cls: 'bg-blue-100 text-blue-700' },
-  debito:  { label: 'Débito',  Icon: CreditCard, cls: 'bg-violet-100 text-violet-700' },
+  pix: { label: 'PIX', Icon: Smartphone, cls: 'bg-green-100 text-green-700' },
 }
 
 function PaymentBadge({ forma }) {
