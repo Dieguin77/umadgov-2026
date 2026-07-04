@@ -2,9 +2,9 @@ import { motion } from 'framer-motion'
 
 const variants = {
   primary: 'bg-lavanda-700 hover:bg-lavanda-800 text-white shadow-lavanda hover:shadow-lavanda-lg',
-  secondary: 'bg-dourado-500 hover:bg-dourado-600 text-white shadow-gold hover:shadow-gold-lg',
+  secondary: 'bg-dourado-600 hover:bg-dourado-700 text-white shadow-gold hover:shadow-gold-lg',
   outline: 'border-2 border-lavanda-600 text-lavanda-600 hover:bg-lavanda-600 hover:text-white',
-  'outline-gold': 'border-2 border-dourado-500 text-dourado-600 hover:bg-dourado-500 hover:text-white',
+  'outline-gold': 'border-2 border-dourado-500 text-dourado-600 hover:bg-dourado-600 hover:text-white',
   ghost: 'text-lavanda-700 hover:bg-lavanda-100',
   danger: 'bg-red-600 hover:bg-red-700 text-white',
   white: 'bg-white text-lavanda-700 hover:bg-lavanda-50 shadow-md',

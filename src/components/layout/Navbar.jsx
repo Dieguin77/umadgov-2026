@@ -34,13 +34,13 @@ export default function Navbar() {
       }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <img
               src={logoOficial}
               alt="UMADGOV"
-              className="h-11 md:h-14 w-auto object-contain shrink-0"
+              className="h-16 md:h-20 w-auto object-contain shrink-0"
               style={{ filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.18))' }}
             />
             <div className="hidden sm:block">
@@ -80,7 +80,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               to="/pedido"
-              className="flex items-center gap-2 bg-dourado-500 hover:bg-dourado-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-gold hover:shadow-gold-lg transition-all duration-200"
+              className="flex items-center gap-2 bg-dourado-600 hover:bg-dourado-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-gold hover:shadow-gold-lg transition-all duration-200"
             >
               <ShoppingBag size={16} />
               Encomendar
@@ -126,7 +126,7 @@ export default function Navbar() {
               ))}
               <Link
                 to="/pedido"
-                className="mt-2 flex items-center justify-center gap-2 bg-dourado-500 text-white px-5 py-3 rounded-xl font-bold shadow-gold"
+                className="mt-2 flex items-center justify-center gap-2 bg-dourado-600 text-white px-5 py-3 rounded-xl font-bold shadow-gold"
               >
                 <ShoppingBag size={18} />
                 Encomendar Agora

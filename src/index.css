@@ -50,13 +50,6 @@
     display: none;
   }
 
-  .text-gradient-gold {
-    background: linear-gradient(135deg, #B8960C 0%, #D4AF37 50%, #eeca4a 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
   .text-gradient-lavanda {
     background: linear-gradient(135deg, #585570 0%, #6A6781 100%);
     -webkit-background-clip: text;

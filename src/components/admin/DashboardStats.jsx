@@ -55,7 +55,7 @@ export default function DashboardStats({ stats, loading }) {
         icon={Clock}
         title="Aguardando pagamento"
         value={stats.aguardandoPagamento}
-        color="bg-amber-500"
+        color="bg-dourado-600"
         delay={0.12}
       />
       <StatCard

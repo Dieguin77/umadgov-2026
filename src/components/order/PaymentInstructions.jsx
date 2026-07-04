@@ -115,9 +115,9 @@ export default function PaymentInstructions({ order }) {
       </motion.div>
 
       {/* Alert */}
-      <div className="flex gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
-        <AlertCircle size={20} className="text-amber-500 shrink-0 mt-0.5" />
-        <p className="text-amber-700 text-sm">
+      <div className="flex gap-3 bg-dourado-50 border border-dourado-200 rounded-xl p-4">
+        <AlertCircle size={20} className="text-dourado-600 shrink-0 mt-0.5" />
+        <p className="text-dourado-700 text-sm">
           Após realizar o Pix, <strong>envie o comprovante</strong> abaixo para confirmar seu pagamento. Sem o comprovante, o pedido permanecerá como "Aguardando pagamento".
         </p>
       </div>

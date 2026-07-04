@@ -104,7 +104,7 @@ export default function HeroSection() {
             <motion.div variants={fadeUp} className="flex flex-wrap justify-center lg:justify-start gap-4">
               <Link
                 to="/pedido"
-                className="inline-flex items-center gap-2 bg-dourado-500 hover:bg-dourado-600 text-white font-bold px-8 py-4 rounded-xl shadow-gold-lg hover:shadow-gold transition-all duration-200 text-lg animate-pulse-gold"
+                className="inline-flex items-center gap-2 bg-dourado-600 hover:bg-dourado-700 text-white font-bold px-8 py-4 rounded-xl shadow-gold-lg hover:shadow-gold transition-all duration-200 text-lg animate-pulse-gold"
               >
                 <ShoppingBag size={22} />
                 Encomendar Agora

@@ -29,7 +29,7 @@ const CATEGORIES = [
     shortLabel: 'Baby Look',
     icon: '👗',
     accent: 'dourado',
-    headerBg: 'bg-dourado-500',
+    headerBg: 'bg-dourado-600',
     rowHighlight: 'bg-dourado-50',
     badge: 'bg-dourado-100 text-dourado-700 border-dourado-200',
     headers: ['Tamanho', 'Comprimento', 'Largura', 'Manga'],

@@ -30,7 +30,7 @@ export default function App() {
                 fontWeight: 500,
               },
               success: {
-                iconTheme: { primary: '#D4AF37', secondary: '#2a2340' },
+                iconTheme: { primary: '#F45F27', secondary: '#2a2340' },
               },
               error: {
                 iconTheme: { primary: '#ef4444', secondary: '#fff' },
