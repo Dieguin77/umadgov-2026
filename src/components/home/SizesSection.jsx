@@ -71,7 +71,7 @@ export default function SizesSection() {
             to="/pedido"
             className="inline-flex items-center gap-2 bg-dourado-600 hover:bg-dourado-700 text-white font-bold px-8 py-4 rounded-xl shadow-gold-lg transition-all duration-200 text-lg"
           >
-            Encomendar Agora — R$ 50,00
+            Encomendar Agora | R$ 50,00
           </Link>
         </motion.div>
       </div>

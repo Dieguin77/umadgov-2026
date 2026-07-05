@@ -32,7 +32,7 @@ export default function AdminPage() {
           animate={{ opacity: 1, y: 0 }}
         >
           <h1 className="text-3xl font-black text-lavanda-900">Dashboard</h1>
-          <p className="text-lavanda-500 mt-1">UMADGOV 2026 — Gerenciamento de pedidos</p>
+          <p className="text-lavanda-500 mt-1">UMADGOV 2026 | Gerenciamento de pedidos</p>
         </motion.div>
 
         {/* Stats */}

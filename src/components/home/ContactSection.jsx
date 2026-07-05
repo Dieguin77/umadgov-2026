@@ -54,7 +54,7 @@ export default function ContactSection() {
             {
               icon: MapPin,
               title: 'Local de Retirada',
-              value: 'Templo Sede — Centro',
+              value: 'Templo Sede | Centro',
               href: 'https://maps.google.com/?q=Rua+Afonso+Pena+3384+Governador+Valadares+MG',
               color: 'bg-dourado-500',
               delay: 0.3,
@@ -127,7 +127,7 @@ export default function ContactSection() {
             <MapPin size={20} className="text-lavanda-500 shrink-0" />
             <div>
               <p className="text-xs text-lavanda-400">Local de retirada</p>
-              <p className="font-bold text-lavanda-800">Templo Sede — Centro</p>
+              <p className="font-bold text-lavanda-800">Templo Sede | Centro</p>
             </div>
           </div>
           <div className="w-px bg-lavanda-100 hidden sm:block" />

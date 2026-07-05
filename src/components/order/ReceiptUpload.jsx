@@ -130,7 +130,7 @@ export default function ReceiptUpload({ order, onSuccess }) {
               <p className="font-bold text-lavanda-700 mb-1">
                 {dragging ? 'Solte o arquivo aqui!' : 'Arraste ou clique para selecionar'}
               </p>
-              <p className="text-lavanda-400 text-sm">JPG, JPEG, PNG ou PDF — máximo 10MB</p>
+              <p className="text-lavanda-400 text-sm">JPG, JPEG, PNG ou PDF | máximo 10MB</p>
             </motion.div>
           )}
         </AnimatePresence>

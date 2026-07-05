@@ -1,15 +1,46 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
-import { User, Phone, Church, Ruler, Hash, ShoppingBag, Smartphone } from 'lucide-react'
+import { User, Phone, Church, Ruler, Hash, ShoppingBag, Smartphone, Shirt, Baby } from 'lucide-react'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
+import SelectableCards from '@/components/ui/SelectableCards'
 import { validators } from '@/utils/validators'
 import { formatPhoneInput, formatCurrency } from '@/utils/formatters'
 import { orderService } from '@/services/orderService'
-import { SHIRT_SIZES, SHIRT_PRICE } from '@/data/mockOrders'
+import { SHIRT_SIZES, SHIRT_PRICE, SHIRT_MODEL_LABELS } from '@/data/mockOrders'
 import toast from 'react-hot-toast'
+
+const SHIRT_MODEL_OPTIONS = [
+  {
+    value: 'masculino',
+    label: SHIRT_MODEL_LABELS.masculino,
+    desc: 'Corte tradicional',
+    icon: Shirt,
+    color: 'text-lavanda-600',
+    bg: 'bg-lavanda-50',
+    border: 'border-lavanda-500',
+  },
+  {
+    value: 'baby_look',
+    label: SHIRT_MODEL_LABELS.baby_look,
+    desc: 'Corte feminino',
+    icon: Shirt,
+    color: 'text-dourado-600',
+    bg: 'bg-dourado-50',
+    border: 'border-dourado-500',
+  },
+  {
+    value: 'infantil',
+    label: SHIRT_MODEL_LABELS.infantil,
+    desc: 'Tamanhos infantis',
+    icon: Baby,
+    color: 'text-emerald-600',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-500',
+  },
+]
 
 export default function OrderForm({ onSuccess }) {
   const [loading, setLoading] = useState(false)
@@ -21,10 +52,11 @@ export default function OrderForm({ onSuccess }) {
     setValue,
     formState: { errors },
   } = useForm({
-    defaultValues: { quantidade: 1, tamanho: '', observacoes: '' },
+    defaultValues: { quantidade: 1, tamanho: '', shirtModel: '', observacoes: '' },
   })
 
   const quantidade = Number(watch('quantidade') || 1)
+  const shirtModel = watch('shirtModel')
   const total = quantidade * SHIRT_PRICE
 
   const handlePhoneInput = (e) => {
@@ -38,6 +70,7 @@ export default function OrderForm({ onSuccess }) {
         nome: data.nome.trim(),
         telefone: data.telefone,
         congregacao: data.congregacao.trim(),
+        shirtModel: data.shirtModel,
         tamanho: data.tamanho,
         quantidade: Number(data.quantidade),
         formaPagamento: 'pix',
@@ -54,37 +87,23 @@ export default function OrderForm({ onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* 1. Shirt model */}
+      <div>
+        <label className="text-sm font-semibold text-lavanda-900 block mb-3">
+          Selecione o modelo da camisa <span className="text-red-500">*</span>
+        </label>
+        <SelectableCards
+          options={SHIRT_MODEL_OPTIONS}
+          register={register}
+          name="shirtModel"
+          validation={{ required: 'Selecione o modelo da camisa para continuar.' }}
+          watchValue={shirtModel}
+          error={errors.shirtModel?.message}
+        />
+      </div>
+
+      {/* 2. Tamanho + 3. Quantidade */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div className="sm:col-span-2">
-          <Input
-            label="Nome Completo"
-            placeholder="Digite seu nome completo"
-            icon={User}
-            error={errors.nome?.message}
-            required
-            {...register('nome', validators.name)}
-          />
-        </div>
-
-        <Input
-          label="Telefone / WhatsApp"
-          placeholder="(33) 99999-9999"
-          icon={Phone}
-          error={errors.telefone?.message}
-          required
-          {...register('telefone', validators.phone)}
-          onChange={handlePhoneInput}
-        />
-
-        <Input
-          label="Congregação"
-          placeholder="Nome da sua congregação"
-          icon={Church}
-          error={errors.congregacao?.message}
-          required
-          {...register('congregacao', validators.congregation)}
-        />
-
         <Select
           label="Tamanho"
           placeholder="Selecione o tamanho"
@@ -106,21 +125,59 @@ export default function OrderForm({ onSuccess }) {
           required
           {...register('quantidade', validators.quantity)}
         />
+      </div>
 
-        <div className="sm:col-span-2">
-          <label className="text-sm font-semibold text-lavanda-900 block mb-1.5">
-            Observações <span className="text-lavanda-400 font-normal">(opcional)</span>
-          </label>
-          <textarea
-            placeholder="Alguma observação sobre seu pedido..."
-            rows={3}
-            {...register('observacoes')}
-            className="w-full rounded-xl border-2 border-lavanda-200 bg-white px-4 py-3 text-lavanda-900 placeholder:text-lavanda-300 transition-all focus:outline-none focus:border-lavanda-500 focus:ring-2 focus:ring-lavanda-100 resize-none"
+      {/* 4. Dados pessoais */}
+      <div>
+        <label className="text-sm font-semibold text-lavanda-900 block mb-3">
+          Dados Pessoais
+        </label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="sm:col-span-2">
+            <Input
+              label="Nome Completo"
+              placeholder="Digite seu nome completo"
+              icon={User}
+              error={errors.nome?.message}
+              required
+              {...register('nome', validators.name)}
+            />
+          </div>
+
+          <Input
+            label="Telefone / WhatsApp"
+            placeholder="(33) 99999-9999"
+            icon={Phone}
+            error={errors.telefone?.message}
+            required
+            {...register('telefone', validators.phone)}
+            onChange={handlePhoneInput}
           />
+
+          <Input
+            label="Congregação"
+            placeholder="Nome da sua congregação"
+            icon={Church}
+            error={errors.congregacao?.message}
+            required
+            {...register('congregacao', validators.congregation)}
+          />
+
+          <div className="sm:col-span-2">
+            <label className="text-sm font-semibold text-lavanda-900 block mb-1.5">
+              Observações <span className="text-lavanda-400 font-normal">(opcional)</span>
+            </label>
+            <textarea
+              placeholder="Alguma observação sobre seu pedido..."
+              rows={3}
+              {...register('observacoes')}
+              className="w-full rounded-xl border-2 border-lavanda-200 bg-white px-4 py-3 text-lavanda-900 placeholder:text-lavanda-300 transition-all focus:outline-none focus:border-lavanda-500 focus:ring-2 focus:ring-lavanda-100 resize-none"
+            />
+          </div>
         </div>
       </div>
 
-      {/* Payment method */}
+      {/* 5. Payment method */}
       <div>
         <label className="text-sm font-semibold text-lavanda-900 block mb-3">
           Forma de Pagamento

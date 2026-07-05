@@ -72,6 +72,8 @@ CREATE TABLE IF NOT EXISTS public.pedidos (
   nome             TEXT NOT NULL,
   telefone         TEXT NOT NULL,
   congregacao      TEXT NOT NULL,
+  "shirtModel"     TEXT NOT NULL DEFAULT 'masculino'
+                     CHECK ("shirtModel" IN ('masculino', 'baby_look', 'infantil')),
   tamanho          TEXT NOT NULL CHECK (tamanho IN ('P','M','G','GG','XG')),
   quantidade       INTEGER NOT NULL CHECK (quantidade > 0),
   valor            NUMERIC(10,2) NOT NULL,
@@ -90,6 +92,18 @@ CREATE TABLE IF NOT EXISTS public.pedidos (
   observacoes      TEXT,
   "createdAt"      TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Migração idempotente: adiciona a coluna em bancos já existentes
+-- (necessário rodar manualmente no SQL Editor do Supabase, já que este
+-- script não cria a tabela de novo se ela já existir).
+ALTER TABLE public.pedidos
+  ADD COLUMN IF NOT EXISTS "shirtModel" TEXT NOT NULL DEFAULT 'masculino';
+
+ALTER TABLE public.pedidos
+  DROP CONSTRAINT IF EXISTS pedidos_shirtmodel_check;
+ALTER TABLE public.pedidos
+  ADD CONSTRAINT pedidos_shirtmodel_check
+  CHECK ("shirtModel" IN ('masculino', 'baby_look', 'infantil'));
 
 -- Trigger: atribui numeroPedido automaticamente ao inserir
 DROP TRIGGER IF EXISTS trg_set_numero_pedido ON public.pedidos;

@@ -79,7 +79,7 @@ export default function Footer() {
                 <div>
                   <p className="text-white font-semibold text-xs mb-0.5">Igreja Evangélica Assembleia de Deus</p>
                   <p>Rua Afonso Pena, 3384</p>
-                  <p>Centro — Governador Valadares/MG</p>
+                  <p>Centro | Governador Valadares/MG</p>
                 </div>
               </li>
             </ul>
@@ -96,11 +96,11 @@ export default function Footer() {
       <div className="border-t border-lavanda-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-lavanda-500 text-xs">
-            © {year} UMADGOV — Todos os direitos reservados
+            © {year} UMADGOV | Todos os direitos reservados
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <p className="text-lavanda-600 text-xs">
-              Feito com para a glória de Deus
+              Desenvolvido para a Glória de Deus!
             </p>
             <span className="hidden sm:block text-lavanda-800 text-xs">·</span>
             <a

@@ -19,6 +19,7 @@ export const orderService = {
           nome: data.nome,
           telefone: data.telefone,
           congregacao: data.congregacao,
+          shirtModel: data.shirtModel,
           tamanho: data.tamanho,
           quantidade: data.quantidade,
           valor,

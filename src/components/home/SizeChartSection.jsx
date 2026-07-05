@@ -149,7 +149,7 @@ function MeasuresModal({ isOpen, onClose }) {
                 </div>
                 <div>
                   <h2 className="font-black text-lavanda-900 text-base">Guia Completo de Medidas</h2>
-                  <p className="text-lavanda-400 text-xs">Todas as categorias — UMADGOV 2026</p>
+                  <p className="text-lavanda-400 text-xs">Todas as categorias | UMADGOV 2026</p>
                 </div>
               </div>
 

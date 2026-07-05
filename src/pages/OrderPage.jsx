@@ -33,7 +33,7 @@ export default function OrderPage() {
                 <ShoppingBag size={28} />
               </div>
               <h1 className="text-2xl font-black mb-1">Encomendar Camisa</h1>
-              <p className="text-lavanda-200 text-sm">UMADGOV 2026 — Vós sois geração eleita</p>
+              <p className="text-lavanda-200 text-sm">UMADGOV 2026 | Vós sois geração eleita</p>
               <div className="flex justify-center gap-6 mt-5">
                 <div className="text-center">
                   <p className="text-white font-black text-xl">R$ 50</p>

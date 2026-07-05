@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Search, ArrowLeft, Package, CheckCircle, Clock, Truck, Star } from 'lucide-react'
 import { orderService } from '@/services/orderService'
-import { STATUS, STATUS_LABELS, STATUS_COLORS, FORMA_PAGAMENTO_LABELS } from '@/data/mockOrders'
+import { STATUS, STATUS_LABELS, STATUS_COLORS, FORMA_PAGAMENTO_LABELS, SHIRT_MODEL_LABELS } from '@/data/mockOrders'
 import { StatusBadge } from '@/components/ui/Badge'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
 import Button from '@/components/ui/Button'
@@ -158,6 +158,7 @@ export default function OrderStatusPage() {
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { l: 'Nome', v: order.nome },
+                    { l: 'Modelo', v: SHIRT_MODEL_LABELS[order.shirtModel] || '—' },
                     { l: 'Tamanho', v: order.tamanho },
                     { l: 'Quantidade', v: `${order.quantidade}x` },
                     { l: 'Valor', v: formatCurrency(order.valor) },

@@ -4,7 +4,7 @@ import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
 import { validators } from '@/utils/validators'
-import { SHIRT_SIZES, SHIRT_PRICE } from '@/data/mockOrders'
+import { SHIRT_SIZES, SHIRT_PRICE, SHIRT_MODEL_LABELS } from '@/data/mockOrders'
 import { formatCurrency } from '@/utils/formatters'
 import { useState } from 'react'
 import { Save } from 'lucide-react'
@@ -17,6 +17,7 @@ export default function EditOrderModal({ order, isOpen, onClose, onSave }) {
       nome: order.nome,
       telefone: order.telefone,
       congregacao: order.congregacao,
+      shirtModel: order.shirtModel || '',
       tamanho: order.tamanho,
       quantidade: order.quantidade,
       observacoes: order.observacoes || '',
@@ -39,11 +40,19 @@ export default function EditOrderModal({ order, isOpen, onClose, onSave }) {
   if (!order) return null
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Editar — ${order.numeroPedido}`} size="md">
+    <Modal isOpen={isOpen} onClose={onClose} title={`Editar | ${order.numeroPedido}`} size="md">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input label="Nome" required error={errors.nome?.message} {...register('nome', validators.name)} />
         <Input label="Telefone" required error={errors.telefone?.message} {...register('telefone', validators.phone)} />
         <Input label="Congregação" required error={errors.congregacao?.message} {...register('congregacao', validators.congregation)} />
+
+        <Select
+          label="Modelo da Camisa"
+          required
+          error={errors.shirtModel?.message}
+          options={Object.entries(SHIRT_MODEL_LABELS).map(([value, label]) => ({ value, label }))}
+          {...register('shirtModel', { required: 'Selecione o modelo da camisa' })}
+        />
 
         <div className="grid grid-cols-2 gap-4">
           <Select

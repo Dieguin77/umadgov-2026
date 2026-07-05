@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { CheckCircle, Copy, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
+import { SHIRT_MODEL_LABELS } from '@/data/mockOrders'
 import Button from '@/components/ui/Button'
 import toast from 'react-hot-toast'
 
@@ -53,6 +54,7 @@ export default function OrderSuccess({ order }) {
         <p className="text-lavanda-500 text-xs uppercase tracking-wider mb-3">Detalhes</p>
         {[
           { label: 'Nome', value: order.nome },
+          { label: 'Modelo', value: SHIRT_MODEL_LABELS[order.shirtModel] || '—' },
           { label: 'Tamanho', value: order.tamanho },
           { label: 'Quantidade', value: `${order.quantidade} ${order.quantidade === 1 ? 'camisa' : 'camisas'}` },
           { label: 'Total', value: formatCurrency(order.valor) },

@@ -107,7 +107,7 @@ export default function AdminLogin() {
             />
           </div>
           <h1 className="text-2xl font-black text-lavanda-900">Acesso Admin</h1>
-          <p className="text-lavanda-400 text-sm mt-1">UMADGOV 2026 — Área Restrita</p>
+          <p className="text-lavanda-400 text-sm mt-1">UMADGOV 2026 | Área Restrita</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

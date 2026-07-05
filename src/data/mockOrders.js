@@ -27,6 +27,18 @@ export const STATUS_COLORS = {
 export const SHIRT_SIZES = ['P', 'M', 'G', 'GG', 'XG']
 export const SHIRT_PRICE = 50
 
+export const SHIRT_MODELS = {
+  MASCULINO: 'masculino',
+  BABY_LOOK: 'baby_look',
+  INFANTIL: 'infantil',
+}
+
+export const SHIRT_MODEL_LABELS = {
+  masculino: 'Masculino',
+  baby_look: 'Baby Look',
+  infantil: 'Infantil',
+}
+
 export const FORMA_PAGAMENTO = {
   PIX: 'pix',
 }
@@ -43,6 +55,7 @@ export const mockOrders = [
     telefone: '(33) 99918-6633',
     congregacao: 'Sede Central',
     tamanho: 'M',
+    shirtModel: 'masculino',
     quantidade: 2,
     valor: 100,
     status: STATUS.PAGAMENTO_APROVADO,
@@ -58,6 +71,7 @@ export const mockOrders = [
     telefone: '(33) 99106-0488',
     congregacao: 'Congregação Norte',
     tamanho: 'G',
+    shirtModel: 'baby_look',
     quantidade: 1,
     valor: 50,
     status: STATUS.COMPROVANTE_ENVIADO,
@@ -73,6 +87,7 @@ export const mockOrders = [
     telefone: '(33) 98800-1234',
     congregacao: 'Congregação Sul',
     tamanho: 'P',
+    shirtModel: 'infantil',
     quantidade: 3,
     valor: 150,
     status: STATUS.AGUARDANDO_PAGAMENTO,
@@ -88,6 +103,7 @@ export const mockOrders = [
     telefone: '(33) 97700-5678',
     congregacao: 'Sede Central',
     tamanho: 'GG',
+    shirtModel: 'masculino',
     quantidade: 2,
     valor: 100,
     status: STATUS.SEPARADO_RETIRADA,
@@ -103,6 +119,7 @@ export const mockOrders = [
     telefone: '(33) 96600-9012',
     congregacao: 'Congregação Leste',
     tamanho: 'XG',
+    shirtModel: 'baby_look',
     quantidade: 1,
     valor: 50,
     status: STATUS.ENTREGUE,
@@ -118,6 +135,7 @@ export const mockOrders = [
     telefone: '(33) 95500-3456',
     congregacao: 'Congregação Oeste',
     tamanho: 'G',
+    shirtModel: 'infantil',
     quantidade: 4,
     valor: 200,
     status: STATUS.AGUARDANDO_PAGAMENTO,
@@ -133,6 +151,7 @@ export const mockOrders = [
     telefone: '(33) 94400-7890',
     congregacao: 'Sede Central',
     tamanho: 'M',
+    shirtModel: 'masculino',
     quantidade: 1,
     valor: 50,
     status: STATUS.PAGAMENTO_APROVADO,
@@ -148,6 +167,7 @@ export const mockOrders = [
     telefone: '(33) 93300-1234',
     congregacao: 'Congregação Norte',
     tamanho: 'G',
+    shirtModel: 'baby_look',
     quantidade: 2,
     valor: 100,
     status: STATUS.COMPROVANTE_ENVIADO,

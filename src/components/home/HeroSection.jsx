@@ -137,13 +137,13 @@ export default function HeroSection() {
               <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-4 sm:p-6 shadow-2xl">
                 <img
                   src={camisaMockup}
-                  alt="Camisa UMADGOV 2026 — Frente e Costas"
+                  alt="Camisa UMADGOV 2026 | Frente e Costas"
                   className="w-full max-w-md mx-auto rounded-2xl object-contain"
                   style={{ filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.4))' }}
                 />
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm rounded-full px-4 py-1.5 flex items-center gap-2">
                   <div className="w-2 h-2 bg-dourado-400 rounded-full" />
-                  <p className="text-white text-xs font-semibold whitespace-nowrap">Camisa Lavanda — UMADGOV 2026</p>
+                  <p className="text-white text-xs font-semibold whitespace-nowrap">Camisa Lavanda | UMADGOV 2026</p>
                 </div>
               </div>
             </motion.div>

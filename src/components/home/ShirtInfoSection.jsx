@@ -77,7 +77,7 @@ export default function ShirtInfoSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           <InfoCard icon={DollarSign} title="Valor por unidade" value="R$ 50,00" accent="gold" delay={0} />
           <InfoCard icon={Calendar} title="Prazo de encomenda" value="23/09/2026" accent="lavanda" delay={0.1} />
-          <InfoCard icon={MapPin} title="Local de retirada" value="Rua Afonso Pena, 3384 — Centro" accent="lavanda" delay={0.2} />
+          <InfoCard icon={MapPin} title="Local de retirada" value="Rua Afonso Pena, 3384 | Centro" accent="lavanda" delay={0.2} />
           <InfoCard icon={Ruler} title="Tamanhos disponíveis" value="P · M · G · GG · XG" accent="gold" delay={0.3} />
         </div>
 
@@ -98,7 +98,7 @@ export default function ShirtInfoSection() {
               </p>
               <img
                 src={camisaMockup}
-                alt="Camisa UMADGOV 2026 — Frente e Costas"
+                alt="Camisa UMADGOV 2026 | Frente e Costas"
                 className="w-full rounded-xl object-contain"
               />
               <p className="text-center text-lavanda-400 text-xs mt-3">
@@ -118,7 +118,7 @@ export default function ShirtInfoSection() {
               </p>
               <img
                 src={arteVetores}
-                alt="Arte da estampa — Vós sois geração eleita"
+                alt="Arte da estampa | Vós sois geração eleita"
                 className="w-full rounded-xl object-contain"
               />
             </motion.div>
@@ -136,7 +136,7 @@ export default function ShirtInfoSection() {
             </h3>
             <p className="text-lavanda-600 mb-8 leading-relaxed">
               Com design exclusivo na cor lavanda, esta camisa é a expressão visual do tema UMADGOV 2026:{' '}
-              <strong>"Vós sois geração eleita"</strong> — I Pedro 2:9. A estampa traz uma pomba com coroa,
+              <strong>"Vós sois geração eleita"</strong> | I Pedro 2:9. A estampa traz uma pomba com coroa,
               símbolo do Espírito Santo e da realeza do povo de Deus.
             </p>
 
@@ -147,7 +147,7 @@ export default function ShirtInfoSection() {
                 { label: 'Estampa Costas', value: 'Pomba com coroa + Geração Eleita' },
                 { label: 'Tamanhos', value: 'P, M, G, GG, XG' },
                 { label: 'Pagamento', value: 'Pix' },
-                { label: 'Retirada', value: 'Rua Afonso Pena, 3384 — Centro, GV/MG' },
+                { label: 'Retirada', value: 'Rua Afonso Pena, 3384 | Centro, GV/MG' },
               ].map(item => (
                 <div key={item.label} className="flex items-center justify-between py-2 border-b border-lavanda-100">
                   <span className="text-lavanda-500 text-sm">{item.label}</span>
@@ -161,7 +161,7 @@ export default function ShirtInfoSection() {
               className="inline-flex items-center gap-2 bg-gradient-lavanda text-white font-bold px-7 py-3.5 rounded-xl shadow-lavanda hover:shadow-lavanda-lg transition-all duration-200"
             >
               <ShoppingBag size={20} />
-              Fazer meu pedido — R$ 50,00
+              Fazer meu pedido | R$ 50,00
             </Link>
           </motion.div>
         </div>

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, Edit, Trash2, ChevronUp, ChevronDown, FileText, Receipt, Smartphone } from 'lucide-react'
 import { StatusBadge } from '@/components/ui/Badge'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
-import { FORMA_PAGAMENTO_LABELS } from '@/data/mockOrders'
+import { FORMA_PAGAMENTO_LABELS, SHIRT_MODEL_LABELS } from '@/data/mockOrders'
 import OrderDetailModal from './OrderDetailModal'
 import EditOrderModal from './EditOrderModal'
 import ComprovanteModal from './ComprovanteModal'
@@ -89,6 +89,7 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
                 <ThSort col="nome">Nome</ThSort>
                 <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden md:table-cell">Congregação</th>
                 <ThSort col="tamanho">Tam.</ThSort>
+                <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden sm:table-cell">Modelo</th>
                 <ThSort col="quantidade">Qtd</ThSort>
                 <ThSort col="valor">Valor</ThSort>
                 <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden sm:table-cell">Pagamento</th>
@@ -121,6 +122,9 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
                     <td className="px-4 py-3 hidden md:table-cell text-lavanda-600 text-sm">{order.congregacao}</td>
                     <td className="px-4 py-3">
                       <span className="bg-lavanda-100 text-lavanda-700 font-bold text-sm px-2 py-1 rounded-lg">{order.tamanho}</span>
+                    </td>
+                    <td className="px-4 py-3 hidden sm:table-cell text-lavanda-600 text-sm">
+                      {SHIRT_MODEL_LABELS[order.shirtModel] || '—'}
                     </td>
                     <td className="px-4 py-3 text-lavanda-700 font-semibold text-sm text-center">{order.quantidade}</td>
                     <td className="px-4 py-3 text-dourado-600 font-black text-sm">{formatCurrency(order.valor)}</td>
@@ -234,7 +238,7 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
           >
             <h3 className="font-black text-lavanda-900 text-lg mb-2">Excluir pedido?</h3>
             <p className="text-lavanda-500 text-sm mb-1">Esta ação não pode ser desfeita.</p>
-            <p className="text-lavanda-700 font-semibold mb-6">{confirmDelete.numeroPedido} — {confirmDelete.nome}</p>
+            <p className="text-lavanda-700 font-semibold mb-6">{confirmDelete.numeroPedido} | {confirmDelete.nome}</p>
             <div className="flex gap-3">
               <button
                 onClick={async () => { await onDeleteOrder(confirmDelete.id); setConfirmDelete(null) }}
