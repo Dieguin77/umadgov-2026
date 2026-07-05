@@ -24,6 +24,7 @@ export function useUpload() {
       return null
     }
 
+    let step = 'storage'
     try {
       setUploading(true)
       setProgress(30)
@@ -31,22 +32,17 @@ export function useUpload() {
       const filePath = await uploadService.uploadComprovante(file, numeroPedido)
       setProgress(70)
 
+      step = 'banco'
       await orderService.updateComprovante(orderId, filePath)
       setProgress(100)
 
       toast.success('Comprovante enviado com sucesso!')
       return filePath
     } catch (err) {
-      console.error('[useUpload] erro no envio do comprovante', err)
-      const isUnsupportedType = /mime type|invalid_mime_type/i.test(err.message || '')
-      const isRlsError = /row-level security/i.test(err.message || '')
-      toast.error(
-        isUnsupportedType
-          ? 'Este formato de arquivo não foi aceito pelo servidor. Tente novamente ou envie como JPG, PNG ou PDF.'
-          : isRlsError
-          ? 'Não foi possível enviar agora. Aguarde alguns segundos e tente novamente.'
-          : 'Erro ao enviar comprovante: ' + err.message
-      )
+      // DIAGNÓSTICO TEMPORÁRIO: mostra a etapa + erro completo do Postgres/Storage
+      // (code/details/hint) para identificar a causa exata reportada no mobile.
+      console.error('[useUpload] erro no envio do comprovante', { step, err, code: err.code, details: err.details, hint: err.hint, status: err.status })
+      toast.error(`[DEBUG ${step}] ${err.message} ${err.code ? `(code: ${err.code})` : ''} ${err.details ? `— ${err.details}` : ''}`, { duration: 15000 })
       return null
     } finally {
       setUploading(false)
