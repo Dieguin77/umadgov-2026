@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Instagram, Phone, MapPin, Heart, ExternalLink } from 'lucide-react'
+import { Instagram, Phone, MapPin, ExternalLink } from 'lucide-react'
 import logoOficial from '@/assets/logo/logooficial.png'
 
 export default function Footer() {
@@ -99,8 +99,8 @@ export default function Footer() {
             © {year} UMADGOV — Todos os direitos reservados
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-3">
-            <p className="text-lavanda-600 text-xs flex items-center gap-1">
-              Feito com <Heart size={12} className="text-dourado-500" /> para a glória de Deus
+            <p className="text-lavanda-600 text-xs">
+              Feito com para a glória de Deus
             </p>
             <span className="hidden sm:block text-lavanda-800 text-xs">·</span>
             <a
