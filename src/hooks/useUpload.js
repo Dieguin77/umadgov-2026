@@ -28,7 +28,12 @@ export function useUpload() {
       toast.success('Comprovante enviado com sucesso!')
       return filePath
     } catch (err) {
-      toast.error('Erro ao enviar comprovante: ' + err.message)
+      const isUnsupportedType = /mime type|invalid_mime_type/i.test(err.message || '')
+      toast.error(
+        isUnsupportedType
+          ? 'Este formato de arquivo não foi aceito pelo servidor. Tente novamente ou envie como JPG, PNG ou PDF.'
+          : 'Erro ao enviar comprovante: ' + err.message
+      )
       return null
     } finally {
       setUploading(false)

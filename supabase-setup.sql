@@ -163,9 +163,18 @@ VALUES (
   'comprovantes',
   false,
   10485760,
-  ARRAY['image/jpeg', 'image/png', 'application/pdf']
+  ARRAY['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
 )
 ON CONFLICT (id) DO NOTHING;
+
+-- Migração idempotente: alguns navegadores/dispositivos (ex.: fotos
+-- encaminhadas pelo WhatsApp no Android) reportam o MIME type de JPEG
+-- como "image/jpg" (não-padrão) em vez de "image/jpeg". O front-end já
+-- aceita os dois, mas o bucket precisa aceitar também, senão o upload
+-- é rejeitado silenciosamente do ponto de vista do usuário.
+UPDATE storage.buckets
+SET allowed_mime_types = ARRAY['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
+WHERE id = 'comprovantes';
 
 -- Policy: upload público (clientes enviam sem login)
 CREATE POLICY "comprovantes_insert_public" ON storage.objects
