@@ -4,6 +4,14 @@ import { orderService } from '@/services/orderService'
 import { validateFile } from '@/utils/validators'
 import toast from 'react-hot-toast'
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+// Instabilidades transitórias da infraestrutura do Supabase (fora do nosso
+// controle) às vezes rejeitam uma requisição válida com esse tipo de erro,
+// mas a mesma requisição já passa a funcionar segundos depois — por isso
+// vale tentar de novo automaticamente antes de mostrar erro ao usuário.
+const isTransientError = (err) => /row-level security|timeout|network|fetch failed/i.test(err?.message || '')
+
 export function useUpload() {
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -24,25 +32,38 @@ export function useUpload() {
       return null
     }
 
-    let step = 'storage'
+    const attempt = async () => {
+      const filePath = await uploadService.uploadComprovante(file, numeroPedido)
+      await orderService.updateComprovante(orderId, filePath)
+      return filePath
+    }
+
     try {
       setUploading(true)
       setProgress(30)
 
-      const filePath = await uploadService.uploadComprovante(file, numeroPedido)
-      setProgress(70)
+      let filePath
+      try {
+        filePath = await attempt()
+      } catch (err) {
+        console.warn('[useUpload] 1ª tentativa falhou, tentando novamente em 2s', err)
+        if (!isTransientError(err)) throw err
+        setProgress(50)
+        await sleep(2000)
+        filePath = await attempt()
+      }
 
-      step = 'banco'
-      await orderService.updateComprovante(orderId, filePath)
       setProgress(100)
-
       toast.success('Comprovante enviado com sucesso!')
       return filePath
     } catch (err) {
-      // DIAGNÓSTICO TEMPORÁRIO: mostra a etapa + erro completo do Postgres/Storage
-      // (code/details/hint) para identificar a causa exata reportada no mobile.
-      console.error('[useUpload] erro no envio do comprovante', { step, err, code: err.code, details: err.details, hint: err.hint, status: err.status })
-      toast.error(`[DEBUG ${step}] ${err.message} ${err.code ? `(code: ${err.code})` : ''} ${err.details ? `— ${err.details}` : ''}`, { duration: 15000 })
+      console.error('[useUpload] erro no envio do comprovante (após retry)', err)
+      const isUnsupportedType = /mime type|invalid_mime_type/i.test(err.message || '')
+      toast.error(
+        isUnsupportedType
+          ? 'Este formato de arquivo não foi aceito pelo servidor. Tente novamente ou envie como JPG, PNG ou PDF.'
+          : 'Não foi possível enviar agora. Aguarde alguns instantes e tente novamente.'
+      )
       return null
     } finally {
       setUploading(false)
