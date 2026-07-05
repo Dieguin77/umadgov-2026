@@ -1,24 +1,32 @@
 import { useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Upload, File, X, CheckCircle, Image, FileText } from 'lucide-react'
+import { Upload, File, X, CheckCircle, Image, FileText, MessageCircle } from 'lucide-react'
 import { useUpload } from '@/hooks/useUpload'
 import { validateFile } from '@/utils/validators'
 import Button from '@/components/ui/Button'
 import toast from 'react-hot-toast'
+
+const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533999186633'
 
 export default function ReceiptUpload({ order, onSuccess }) {
   const [file, setFile] = useState(null)
   const [preview, setPreview] = useState(null)
   const [dragging, setDragging] = useState(false)
   const [done, setDone] = useState(false)
+  const [failed, setFailed] = useState(false)
   const inputRef = useRef(null)
   const submittingRef = useRef(false)
   const { uploading, progress, uploadComprovante } = useUpload()
+
+  const waFallbackHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
+    `Olá! Não consegui enviar o comprovante pelo site do pedido ${order?.numeroPedido || ''}, segue em anexo:`
+  )}`
 
   const handleFile = (selectedFile) => {
     const err = validateFile(selectedFile)
     if (err) { toast.error(err); return }
 
+    setFailed(false)
     setFile(selectedFile)
     if (selectedFile.type.startsWith('image/')) {
       const reader = new FileReader()
@@ -48,8 +56,11 @@ export default function ReceiptUpload({ order, onSuccess }) {
     try {
       const path = await uploadComprovante(file, order.id, order.numeroPedido)
       if (path) {
+        setFailed(false)
         setDone(true)
         onSuccess?.()
+      } else {
+        setFailed(true)
       }
     } finally {
       submittingRef.current = false
@@ -173,6 +184,34 @@ export default function ReceiptUpload({ order, onSuccess }) {
       >
         {uploading ? 'Enviando...' : 'Enviar Comprovante'}
       </Button>
+
+      {/* Fallback: só aparece se o envio falhar mesmo após a retentativa automática */}
+      <AnimatePresence>
+        {failed && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: -6, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="bg-dourado-50 border border-dourado-200 rounded-xl p-4 space-y-2">
+              <p className="text-dourado-700 text-sm font-semibold">Não conseguiu enviar?</p>
+              <p className="text-dourado-600 text-sm">
+                Isso pode acontecer por instabilidade momentânea. Seu pedido já está confirmado mesmo assim — o comprovante é só para agilizar a conferência.
+              </p>
+              <a
+                href={waFallbackHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                <MessageCircle size={16} />
+                Enviar pelo WhatsApp
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <p className="text-lavanda-400 text-xs text-center">
         Aceitos: JPG, JPEG, PNG, PDF. Máximo: 10MB.
