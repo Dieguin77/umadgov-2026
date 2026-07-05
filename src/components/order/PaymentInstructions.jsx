@@ -6,7 +6,7 @@ import { formatCurrency } from '@/utils/formatters'
 import { buildPixPayload } from '@/utils/pixPayload'
 import toast from 'react-hot-toast'
 
-const PIX_KEY = '52161276000155'
+const PIX_KEY = 'ramayane-moura@jim.com'
 const MERCHANT_NAME = 'UMADGOV 2026'
 const MERCHANT_CITY = 'Governador Valadares'
 
