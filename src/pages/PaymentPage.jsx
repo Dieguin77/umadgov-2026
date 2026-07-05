@@ -83,7 +83,7 @@ export default function PaymentPage() {
 
             {/* Upload receipt */}
             <div>
-              <h2 className="text-lg font-bold text-lavanda-900 mb-4">2. Envie o comprovante</h2>
+              <h2 className="text-lg font-bold text-lavanda-900 mb-4">2. Comprovante (opcional)</h2>
               <ReceiptUpload
                 order={order}
                 onSuccess={() => {

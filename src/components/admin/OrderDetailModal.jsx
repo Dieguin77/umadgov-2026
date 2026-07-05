@@ -95,7 +95,7 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
                 <div className="w-8 h-8 bg-lavanda-50 rounded-lg flex items-center justify-center">
                   <Receipt size={14} className="text-lavanda-300" />
                 </div>
-                <p className="text-sm italic">Comprovante não enviado</p>
+                <p className="text-sm italic">Sem comprovante enviado</p>
               </div>
             )}
           </div>

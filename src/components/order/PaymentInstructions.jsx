@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
-import { Copy, CheckCheck, Smartphone, AlertCircle } from 'lucide-react'
+import { Copy, CheckCheck, Smartphone, Info } from 'lucide-react'
 import { formatCurrency } from '@/utils/formatters'
 import { buildPixPayload } from '@/utils/pixPayload'
 import toast from 'react-hot-toast'
@@ -101,7 +101,7 @@ export default function PaymentInstructions({ order }) {
               'Acesse a área Pix e escolha "Pix Copia e Cola" ou escaneie o QR Code',
               'Cole o código ou aponte a câmera para o QR Code acima',
               `Confira o valor: ${formatCurrency(order.valor)}`,
-              'Confirme o pagamento e salve o comprovante',
+              'Confirme o pagamento no aplicativo do seu banco',
             ].map((step, i) => (
               <li key={i} className="flex items-start gap-3 text-sm text-lavanda-600">
                 <span className="w-6 h-6 rounded-full bg-green-100 text-green-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
@@ -114,12 +114,18 @@ export default function PaymentInstructions({ order }) {
         </div>
       </motion.div>
 
-      {/* Alert */}
+      {/* Info: comprovante is optional */}
       <div className="flex gap-3 bg-dourado-50 border border-dourado-200 rounded-xl p-4">
-        <AlertCircle size={20} className="text-dourado-600 shrink-0 mt-0.5" />
-        <p className="text-dourado-700 text-sm">
-          Após realizar o Pix, <strong>envie o comprovante</strong> abaixo para confirmar seu pagamento. Sem o comprovante, o pedido permanecerá como "Aguardando pagamento".
-        </p>
+        <Info size={20} className="text-dourado-600 shrink-0 mt-0.5" />
+        <div className="text-sm text-dourado-700 space-y-1.5">
+          <p className="font-bold">Pagamento realizado?</p>
+          <p>
+            Você poderá anexar o comprovante abaixo para facilitar a conferência do pagamento pela equipe organizadora.
+          </p>
+          <p>
+            Caso o pagamento seja identificado automaticamente, nenhuma ação adicional será necessária.
+          </p>
+        </div>
       </div>
     </div>
   )

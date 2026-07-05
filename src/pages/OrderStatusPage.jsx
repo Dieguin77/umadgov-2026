@@ -181,9 +181,9 @@ export default function OrderStatusPage() {
                 {/* CTA: send receipt if waiting — only for PIX */}
                 {order.status === STATUS.AGUARDANDO_PAGAMENTO && order.formaPagamento === 'pix' && (
                   <div className="bg-dourado-50 border border-dourado-200 rounded-xl p-4">
-                    <p className="text-dourado-700 text-sm font-semibold mb-2">Pagamento pendente</p>
+                    <p className="text-dourado-700 text-sm font-semibold mb-2">Aguardando confirmação de pagamento</p>
                     <p className="text-dourado-600 text-sm mb-3">
-                      Realize o Pix e envie o comprovante para agilizar a aprovação.
+                      Se preferir, envie o comprovante para agilizar a conferência do seu pagamento pela equipe organizadora.
                     </p>
                     <Link
                       to={`/enviar-comprovante?pedido=${order.numeroPedido}`}

@@ -7,6 +7,8 @@ let localOrders = [...mockOrders]
 let nextOrderIndex = mockOrders.length + 1
 
 export const orderService = {
+  // Cria o pedido independentemente de comprovante — o campo é opcional e
+  // serve apenas de apoio para a conferência manual do pagamento.
   async createOrder(data) {
     const valor = data.quantidade * SHIRT_PRICE
 
@@ -106,6 +108,9 @@ export const orderService = {
     return orders
   },
 
+  // Ponto único de confirmação de pagamento (ex.: PAGAMENTO_APROVADO).
+  // Uma futura integração com Gateway PIX (webhook) deve chamar este método
+  // diretamente, sem depender do envio de comprovante.
   async updateOrderStatus(id, status) {
     if (isSupabaseConfigured) {
       const { data, error } = await supabase
@@ -152,6 +157,8 @@ export const orderService = {
     return true
   },
 
+  // Apenas registra o arquivo enviado pelo cliente para conferência manual;
+  // não confirma pagamento nem valida o pedido (isso é feito via updateOrderStatus).
   async updateComprovante(id, comprovantePath) {
     return this.updateOrder(id, {
       comprovante: comprovantePath,

@@ -89,8 +89,8 @@ export default function ComprovanteModal({ order, isOpen, onClose }) {
               {!loading && !order.comprovante && (
                 <div className="flex flex-col items-center justify-center h-44 text-lavanda-300 gap-3">
                   <FileText size={40} />
-                  <p className="font-semibold text-lavanda-500">Comprovante não enviado</p>
-                  <p className="text-xs text-lavanda-400">O cliente ainda não enviou o comprovante</p>
+                  <p className="font-semibold text-lavanda-500">Sem comprovante enviado</p>
+                  <p className="text-xs text-lavanda-400">O comprovante é opcional e ainda não foi enviado pelo cliente</p>
                 </div>
               )}
 

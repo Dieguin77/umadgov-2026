@@ -141,7 +141,7 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
                           Visualizar
                         </button>
                       ) : (
-                        <span className="text-lavanda-300 text-xs italic">Não enviado</span>
+                        <span className="text-lavanda-300 text-xs italic">Sem comprovante enviado</span>
                       )}
                     </td>
 
@@ -157,7 +157,7 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
                               ? 'hover:bg-lavanda-100 text-lavanda-500 hover:text-lavanda-700'
                               : 'text-lavanda-200 cursor-not-allowed'
                           }`}
-                          title={order.comprovante ? 'Ver comprovante' : 'Comprovante não enviado'}
+                          title={order.comprovante ? 'Ver comprovante' : 'Sem comprovante enviado'}
                           disabled={!order.comprovante}
                         >
                           <Receipt size={15} />
