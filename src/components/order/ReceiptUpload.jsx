@@ -12,6 +12,7 @@ export default function ReceiptUpload({ order, onSuccess }) {
   const [dragging, setDragging] = useState(false)
   const [done, setDone] = useState(false)
   const inputRef = useRef(null)
+  const submittingRef = useRef(false)
   const { uploading, progress, uploadComprovante } = useUpload()
 
   const handleFile = (selectedFile) => {
@@ -39,11 +40,19 @@ export default function ReceiptUpload({ order, onSuccess }) {
   const onDragLeave = () => setDragging(false)
 
   const handleSubmit = async () => {
-    if (!file) return
-    const path = await uploadComprovante(file, order.id, order.numeroPedido)
-    if (path) {
-      setDone(true)
-      onSuccess?.()
+    // Trava síncrona contra duplo toque/clique (mobile costuma disparar o
+    // evento mais de uma vez antes do React re-renderizar o botão como
+    // desabilitado) — impede duas chamadas de upload em paralelo.
+    if (!file || submittingRef.current) return
+    submittingRef.current = true
+    try {
+      const path = await uploadComprovante(file, order.id, order.numeroPedido)
+      if (path) {
+        setDone(true)
+        onSuccess?.()
+      }
+    } finally {
+      submittingRef.current = false
     }
   }
 

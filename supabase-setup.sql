@@ -180,6 +180,15 @@ WHERE id = 'comprovantes';
 CREATE POLICY "comprovantes_insert_public" ON storage.objects
   FOR INSERT WITH CHECK (bucket_id = 'comprovantes');
 
+-- Policy: upsert público (o app usa upsert:true no upload; sem esta
+-- policy, uma segunda gravação no mesmo caminho — ex.: retry de rede
+-- instável ou duplo toque no mobile — vira um UPDATE bloqueado por RLS
+-- com o erro "new row violates row-level security policy")
+DROP POLICY IF EXISTS "comprovantes_update_public" ON storage.objects;
+CREATE POLICY "comprovantes_update_public" ON storage.objects
+  FOR UPDATE USING (bucket_id = 'comprovantes')
+  WITH CHECK (bucket_id = 'comprovantes');
+
 -- Policy: leitura para usuário autenticado (admin vê via URL assinada)
 CREATE POLICY "comprovantes_select_auth" ON storage.objects
   FOR SELECT USING (
