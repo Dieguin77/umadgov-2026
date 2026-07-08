@@ -17,14 +17,6 @@ export function useUpload() {
   const [progress, setProgress] = useState(0)
 
   const uploadComprovante = async (file, orderId, numeroPedido) => {
-    console.log('[useUpload] arquivo selecionado', {
-      nome: file.name,
-      tipo: file.type,
-      tamanhoMB: (file.size / 1024 / 1024).toFixed(2),
-      orderId,
-      numeroPedido,
-    })
-
     const validationError = validateFile(file)
     if (validationError) {
       console.warn('[useUpload] falhou na validação local', validationError)
@@ -58,12 +50,29 @@ export function useUpload() {
       return filePath
     } catch (err) {
       console.error('[useUpload] erro no envio do comprovante (após retry)', err)
-      const isUnsupportedType = /mime type|invalid_mime_type/i.test(err.message || '')
-      toast.error(
-        isUnsupportedType
-          ? 'Este formato de arquivo não foi aceito pelo servidor. Tente novamente ou envie como JPG, PNG ou PDF.'
-          : 'Não foi possível enviar agora. Aguarde alguns instantes e tente novamente.'
-      )
+      const text = (err?.message || '').toLowerCase()
+      const isUnsupportedType = /mime|invalid file type|tipo de arquivo inválido/i.test(text)
+      const isPermissionError = /permission denied|sem permissão/i.test(text)
+      const isBucketNotFound = /bucket não encontrado|bucket not found/i.test(text)
+      const isSizeError = /arquivo muito grande|payload too large|413/i.test(text)
+      const isAuthError = /autenticação|invalid token|jwt/i.test(text)
+      const isNetworkError = /timeout|network|fetch failed/i.test(text)
+
+      const message = isBucketNotFound
+        ? 'Bucket não encontrado. Contate o administrador.'
+        : isPermissionError
+        ? 'Sem permissão para upload. Verifique as políticas do Supabase.'
+        : isSizeError
+        ? 'Arquivo muito grande. Máximo 10MB.'
+        : isUnsupportedType
+        ? 'Tipo de arquivo inválido. Use JPG, PNG ou PDF.'
+        : isAuthError
+        ? 'Erro de autenticação. Atualize a página e tente novamente.'
+        : isNetworkError
+        ? 'Falha de conexão com o Supabase. Tente novamente em alguns instantes.'
+        : 'Não foi possível enviar agora. Aguarde alguns instantes e tente novamente.'
+
+      toast.error(message)
       return null
     } finally {
       setUploading(false)

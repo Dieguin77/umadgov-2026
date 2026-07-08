@@ -41,15 +41,31 @@ export const validators = {
   },
 }
 
+const FALLBACK_MIME_TYPES = {
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+  pdf: 'application/pdf',
+}
+
+const getFileMimeType = (file) => {
+  if (file.type) return file.type
+  const extension = file.name.split('.').pop().toLowerCase()
+  return FALLBACK_MIME_TYPES[extension] || ''
+}
+
 export const validateFile = (file) => {
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
   const maxSize = 10 * 1024 * 1024 // 10MB
+  const fileType = getFileMimeType(file)
 
-  if (!allowedTypes.includes(file.type)) {
+  if (!allowedTypes.includes(fileType)) {
     return 'Arquivo inválido. Aceitos: JPG, JPEG, PNG, PDF'
   }
+
   if (file.size > maxSize) {
     return 'Arquivo muito grande. Máximo 10MB'
   }
+
   return null
 }

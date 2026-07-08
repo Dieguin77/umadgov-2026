@@ -1,37 +1,68 @@
 import { supabase, isSupabaseConfigured, STORAGE_BUCKET } from '@/lib/supabase'
 
+const FALLBACK_MIME_TYPES = {
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+  pdf: 'application/pdf',
+}
+
+const normalizeFileType = (file) => {
+  if (file?.type) return file.type
+  const ext = file?.name?.split('.').pop()?.toLowerCase()
+  return FALLBACK_MIME_TYPES[ext] || ''
+}
+
+const mapStorageError = (error) => {
+  const message = error?.message || ''
+  const details = [error?.details, error?.hint].filter(Boolean).join(' | ')
+  const full = `${message} ${details}`.toLowerCase()
+
+  if (/bucket not found|não encontrado|404/.test(full)) {
+    return 'Bucket não encontrado. Verifique a configuração do Supabase.'
+  }
+  if (/permission denied|sem permissão|403/.test(full)) {
+    return 'Sem permissão para upload. Verifique as políticas do bucket.'
+  }
+  if (/file_size_limit|payload too large|arquivo muito grande|413/.test(full)) {
+    return 'Arquivo muito grande. Máximo 10MB.'
+  }
+  if (/mime|invalid file type|tipo de arquivo inválido|unsupported media type/.test(full)) {
+    return 'Tipo de arquivo inválido. Aceitos: JPG, JPEG, PNG ou PDF.'
+  }
+  if (/timeout|network|fetch failed|failed to fetch/.test(full)) {
+    return 'Falha na conexão com o Supabase. Tente novamente em alguns instantes.'
+  }
+  return error?.message || 'Falha ao enviar comprovante para o Supabase.'
+}
+
 export const uploadService = {
   async uploadComprovante(file, numeroPedido) {
     const ext = file.name.split('.').pop().toLowerCase()
-    // Sufixo aleatório além do timestamp: evita colisão de nome (e portanto
-    // um upsert virar UPDATE, que não tem política de RLS) quando duas
-    // tentativas de upload acontecem no mesmo milissegundo (retry de rede
-    // instável ou duplo toque no mobile).
+    const fileType = normalizeFileType(file)
     const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
     const fileName = `${numeroPedido}-comprovante-${unique}.${ext}`
-    const filePath = `${fileName}`
-
-    console.log('[uploadService] iniciando upload', {
-      bucket: STORAGE_BUCKET,
-      filePath,
-      fileName: file.name,
-      fileType: file.type,
-      fileSize: file.size,
-    })
+    const filePath = `comprovantes/${fileName}`
 
     if (isSupabaseConfigured) {
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from(STORAGE_BUCKET)
-        .upload(filePath, file, { upsert: true })
+        .upload(filePath, file, {
+          upsert: true,
+          contentType: fileType || undefined,
+        })
 
-      console.log('[uploadService] resposta do Supabase Storage', { data, error })
+      if (error) {
+        const message = mapStorageError(error)
+        const uploadError = new Error(message)
+        uploadError.original = error
+        throw uploadError
+      }
 
-      if (error) throw error
       return filePath
     }
 
-    // Mock: simula upload retornando o path
-    await new Promise(r => setTimeout(r, 1500))
+    await new Promise((resolve) => setTimeout(resolve, 1500))
     return `mock/${filePath}`
   },
 
@@ -43,9 +74,14 @@ export const uploadService = {
     }
 
     if (isSupabaseConfigured) {
-      const { data } = await supabase.storage
+      const { data, error } = await supabase.storage
         .from(STORAGE_BUCKET)
         .createSignedUrl(filePath, 3600)
+
+      if (error) {
+        console.error('[uploadService] erro ao gerar URL do comprovante', error)
+        return null
+      }
       return data?.signedUrl || null
     }
 
