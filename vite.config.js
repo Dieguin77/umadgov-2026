@@ -13,6 +13,9 @@ export default defineConfig({
     port: 5173,
     open: true,
   },
+  test: {
+    environment: 'node',
+  },
   build: {
     outDir: 'dist',
     sourcemap: false,
