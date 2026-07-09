@@ -1,8 +1,11 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { Instagram, Phone, MapPin, Clock, MessageCircle } from 'lucide-react'
+import { formatPhone } from '@/utils/formatters'
 
 const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533999186633'
+const WA_NUMBER_2 = import.meta.env.VITE_WHATSAPP_NUMBER_2 || '5533991060488'
+const IG_USER = import.meta.env.VITE_INSTAGRAM_USER || 'umadgov'
 const WA_MSG = encodeURIComponent('Olá! Gostaria de saber mais sobre a camisa da UMADGOV 2026.')
 
 export default function ContactSection() {
@@ -30,15 +33,15 @@ export default function ContactSection() {
             {
               icon: Instagram,
               title: 'Instagram',
-              value: '@umadgov',
-              href: 'https://instagram.com/umadgov',
+              value: `@${IG_USER}`,
+              href: `https://instagram.com/${IG_USER}`,
               color: 'bg-gradient-to-br from-purple-500 to-pink-500',
               delay: 0,
             },
             {
               icon: MessageCircle,
               title: 'WhatsApp',
-              value: '(33) 99918-6633',
+              value: formatPhone(WA_NUMBER.replace(/^55/, '')),
               href: `https://wa.me/${WA_NUMBER}?text=${WA_MSG}`,
               color: 'bg-green-500',
               delay: 0.1,
@@ -46,8 +49,8 @@ export default function ContactSection() {
             {
               icon: Phone,
               title: 'Telefone',
-              value: '(33) 99106-0488',
-              href: 'tel:+5533991060488',
+              value: formatPhone(WA_NUMBER_2.replace(/^55/, '')),
+              href: `tel:+${WA_NUMBER_2}`,
               color: 'bg-lavanda-600',
               delay: 0.2,
             },

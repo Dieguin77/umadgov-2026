@@ -25,7 +25,7 @@ export const STATUS_COLORS = {
 }
 
 export const SHIRT_SIZES = ['P', 'M', 'G', 'GG', 'XG']
-export const SHIRT_PRICE = 50
+export const SHIRT_PRICE = Number(import.meta.env.VITE_SHIRT_PRICE) || 50
 
 export const SHIRT_MODELS = {
   MASCULINO: 'masculino',
