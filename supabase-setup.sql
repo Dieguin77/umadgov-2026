@@ -120,6 +120,7 @@ ALTER TABLE public.pedidos ENABLE ROW LEVEL SECURITY;
 -- os pedidos de todo mundo com uma query sem filtro). A consulta pública de
 -- UM pedido pelo número acontece pela função get_pedido_by_numero() abaixo.
 DROP POLICY IF EXISTS "pedidos_select_public" ON public.pedidos;
+DROP POLICY IF EXISTS "pedidos_select_admin" ON public.pedidos;
 CREATE POLICY "pedidos_select_admin" ON public.pedidos
   FOR SELECT USING (
     EXISTS (
@@ -129,22 +130,21 @@ CREATE POLICY "pedidos_select_admin" ON public.pedidos
     )
   );
 
--- Policy: inserção pública (qualquer pessoa pode fazer um pedido), mas só com
--- os valores iniciais válidos — impede que alguém insira via API um pedido
--- já marcado como pago/com comprovante.
+-- Nao ha policy de INSERT publica: um INSERT do PostgREST sempre volta com
+-- RETURNING *, que aciona a policy de SELECT acima (restrita a
+-- admin/moderador) — ou seja, mesmo com INSERT liberado, o cliente final
+-- nunca conseguiria ler de volta o pedido que acabou de criar (precisa do
+-- numeroPedido gerado pelo trigger). A criacao de pedido do cliente final
+-- passa pela funcao create_pedido() abaixo (SECURITY DEFINER), que insere e
+-- devolve a linha sem depender de RLS.
 DROP POLICY IF EXISTS "pedidos_insert_public" ON public.pedidos;
-CREATE POLICY "pedidos_insert_public" ON public.pedidos
-  FOR INSERT WITH CHECK (
-    status = 'aguardando_pagamento'
-    AND comprovante IS NULL
-    AND "comprovanteAt" IS NULL
-  );
 
 -- Policy: atualização restrita a admin/moderador autenticado. O envio de
 -- comprovante pelo cliente final passa pela função
 -- update_comprovante_by_numero() abaixo (SECURITY DEFINER), que só altera os
 -- campos de comprovante do próprio pedido — nunca a tabela inteira.
 DROP POLICY IF EXISTS "pedidos_update_public" ON public.pedidos;
+DROP POLICY IF EXISTS "pedidos_update_admin" ON public.pedidos;
 CREATE POLICY "pedidos_update_admin" ON public.pedidos
   FOR UPDATE USING (
     EXISTS (
@@ -174,6 +174,36 @@ CREATE POLICY "pedidos_delete_admin" ON public.pedidos
 --    comprovante do PRÓPRIO pedido — sem permitir leitura/gravação de
 --    pedidos de outras pessoas.
 -- ==========================
+
+CREATE OR REPLACE FUNCTION public.create_pedido(
+  p_nome TEXT,
+  p_telefone TEXT,
+  p_congregacao TEXT,
+  p_shirt_model TEXT,
+  p_tamanho TEXT,
+  p_quantidade INTEGER,
+  p_valor NUMERIC,
+  p_forma_pagamento TEXT,
+  p_observacoes TEXT DEFAULT NULL
+)
+RETURNS SETOF public.pedidos
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  INSERT INTO public.pedidos (
+    nome, telefone, congregacao, "shirtModel", tamanho, quantidade, valor,
+    status, "formaPagamento", comprovante, "comprovanteAt", observacoes
+  )
+  VALUES (
+    p_nome, p_telefone, p_congregacao, p_shirt_model, p_tamanho, p_quantidade, p_valor,
+    'aguardando_pagamento', p_forma_pagamento, NULL, NULL, p_observacoes
+  )
+  RETURNING *;
+$$;
+
+REVOKE ALL ON FUNCTION public.create_pedido(TEXT, TEXT, TEXT, TEXT, TEXT, INTEGER, NUMERIC, TEXT, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.create_pedido(TEXT, TEXT, TEXT, TEXT, TEXT, INTEGER, NUMERIC, TEXT, TEXT) TO anon, authenticated;
 
 CREATE OR REPLACE FUNCTION public.get_pedido_by_numero(p_numero TEXT)
 RETURNS SETOF public.pedidos
@@ -211,23 +241,20 @@ GRANT EXECUTE ON FUNCTION public.update_comprovante_by_numero(TEXT, TEXT) TO ano
 --    (dashboard cria automático; SQL não cria)
 -- ==========================
 
--- profiles: authenticated pode ler o próprio perfil e inserir. anon tambem
--- precisa do GRANT de SELECT (mesmo sem nunca enxergar nenhuma linha, pois
--- profiles_select_own exige auth.uid() = id e anon nao tem sessao) porque as
--- policies pedidos_select_admin/pedidos_update_admin fazem um EXISTS contra
--- profiles - sem esse GRANT, o Postgres barra com "permission denied for
--- table profiles" ja no INSERT do pedido (o INSERT do PostgREST sempre volta
--- com RETURNING *, que aciona a policy de SELECT de pedidos).
+-- profiles: authenticated pode ler o próprio perfil e inserir. anon nao
+-- precisa de nenhum grant aqui: as tres operacoes publicas (criar pedido,
+-- consultar, enviar comprovante) passam por funcoes SECURITY DEFINER que
+-- ignoram a RLS de pedidos inteiramente, entao nunca chegam a avaliar o
+-- EXISTS contra profiles das policies pedidos_select_admin/pedidos_update_admin.
 GRANT SELECT, INSERT, UPDATE ON public.profiles TO authenticated;
-GRANT SELECT ON public.profiles TO anon;
 
--- pedidos: anon só pode criar pedido (INSERT). Consulta e envio de
--- comprovante do cliente final passam pelas funções SECURITY DEFINER acima,
--- não por SELECT/UPDATE direto na tabela (que exigiria abrir a tabela
--- inteira para a chave anon). authenticated (admin/moderador) tem acesso
--- total via policy.
-REVOKE SELECT, UPDATE ON public.pedidos FROM anon;
-GRANT INSERT ON public.pedidos TO anon;
+-- pedidos: anon nao tem NENHUM grant direto na tabela — criar pedido,
+-- consultar e enviar comprovante passam inteiramente pelas funções
+-- SECURITY DEFINER acima (create_pedido, get_pedido_by_numero,
+-- update_comprovante_by_numero), que ignoram RLS e nao dependem de GRANT de
+-- tabela para o caller. authenticated (admin/moderador) tem acesso total via
+-- policy.
+REVOKE SELECT, INSERT, UPDATE ON public.pedidos FROM anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.pedidos TO authenticated;
 
 -- sequência do numeroPedido

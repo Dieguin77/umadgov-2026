@@ -9,30 +9,29 @@ let nextOrderIndex = mockOrders.length + 1
 export const orderService = {
   // Cria o pedido independentemente de comprovante — o campo é opcional e
   // serve apenas de apoio para a conferência manual do pagamento.
+  // Usa a função SECURITY DEFINER create_pedido (não INSERT direto na
+  // tabela): um INSERT do PostgREST sempre volta com RETURNING *, que aciona
+  // a policy de SELECT (restrita a admin/moderador) — o cliente final nunca
+  // conseguiria ler de volta o pedido que acabou de criar. A função ignora a
+  // RLS e devolve a linha (com o numeroPedido gerado pelo trigger).
   async createOrder(data) {
     const valor = data.quantidade * SHIRT_PRICE
 
     if (isSupabaseConfigured) {
       const { data: created, error } = await supabase
-        .from('pedidos')
-        .insert([{
-          nome: data.nome,
-          telefone: data.telefone,
-          congregacao: data.congregacao,
-          shirtModel: data.shirtModel,
-          tamanho: data.tamanho,
-          quantidade: data.quantidade,
-          valor,
-          status: STATUS.AGUARDANDO_PAGAMENTO,
-          formaPagamento: data.formaPagamento || 'pix',
-          comprovante: null,
-          comprovanteAt: null,
-          observacoes: data.observacoes || null,
-        }])
-        .select()
-        .single()
+        .rpc('create_pedido', {
+          p_nome: data.nome,
+          p_telefone: data.telefone,
+          p_congregacao: data.congregacao,
+          p_shirt_model: data.shirtModel,
+          p_tamanho: data.tamanho,
+          p_quantidade: data.quantidade,
+          p_valor: valor,
+          p_forma_pagamento: data.formaPagamento || 'pix',
+          p_observacoes: data.observacoes || null,
+        })
       if (error) throw error
-      return created
+      return created?.[0]
     }
 
     const numeroPedido = generateOrderNumber(nextOrderIndex++)
