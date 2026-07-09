@@ -16,7 +16,7 @@ export function useUpload() {
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
 
-  const uploadComprovante = async (file, orderId, numeroPedido) => {
+  const uploadComprovante = async (file, numeroPedido) => {
     const validationError = validateFile(file)
     if (validationError) {
       console.warn('[useUpload] falhou na validação local', validationError)
@@ -26,7 +26,7 @@ export function useUpload() {
 
     const attempt = async () => {
       const filePath = await uploadService.uploadComprovante(file, numeroPedido)
-      await orderService.updateComprovante(orderId, filePath)
+      await orderService.updateComprovante(numeroPedido, filePath)
       return filePath
     }
 

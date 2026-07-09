@@ -51,15 +51,16 @@ export const orderService = {
     return order
   },
 
+  // Usa a função SECURITY DEFINER get_pedido_by_numero (não SELECT direto na
+  // tabela): a policy RLS de SELECT é restrita a admin/moderador, então a
+  // consulta pública do cliente final passa por essa função, que só expõe o
+  // pedido daquele número específico — nunca a tabela inteira.
   async getOrderByNumber(numeroPedido) {
     if (isSupabaseConfigured) {
       const { data, error } = await supabase
-        .from('pedidos')
-        .select('*')
-        .eq('numeroPedido', numeroPedido)
-        .single()
+        .rpc('get_pedido_by_numero', { p_numero: numeroPedido })
       if (error) throw error
-      return data
+      return data?.[0] || null
     }
     return localOrders.find(o => o.numeroPedido === numeroPedido) || null
   },
@@ -160,12 +161,29 @@ export const orderService = {
 
   // Apenas registra o arquivo enviado pelo cliente para conferência manual;
   // não confirma pagamento nem valida o pedido (isso é feito via updateOrderStatus).
-  async updateComprovante(id, comprovantePath) {
-    return this.updateOrder(id, {
+  // Usa a função SECURITY DEFINER update_comprovante_by_numero (não UPDATE
+  // direto na tabela): a policy RLS de UPDATE é restrita a admin/moderador,
+  // então o envio de comprovante do cliente final passa por essa função, que
+  // só altera os campos de comprovante do próprio pedido.
+  async updateComprovante(numeroPedido, comprovantePath) {
+    if (isSupabaseConfigured) {
+      const { data, error } = await supabase
+        .rpc('update_comprovante_by_numero', {
+          p_numero: numeroPedido,
+          p_comprovante: comprovantePath,
+        })
+      if (error) throw error
+      return data?.[0] || null
+    }
+    const idx = localOrders.findIndex(o => o.numeroPedido === numeroPedido)
+    if (idx === -1) throw new Error('Pedido não encontrado')
+    localOrders[idx] = {
+      ...localOrders[idx],
       comprovante: comprovantePath,
       comprovanteAt: new Date().toISOString(),
       status: STATUS.COMPROVANTE_ENVIADO,
-    })
+    }
+    return localOrders[idx]
   },
 
   async getDashboardStats() {

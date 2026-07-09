@@ -19,9 +19,11 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "profiles_select_own" ON public.profiles;
 CREATE POLICY "profiles_select_own" ON public.profiles
   FOR SELECT USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "profiles_insert_own" ON public.profiles;
 CREATE POLICY "profiles_insert_own" ON public.profiles
   FOR INSERT WITH CHECK (auth.uid() = id);
 
@@ -113,19 +115,47 @@ CREATE TRIGGER trg_set_numero_pedido
 
 ALTER TABLE public.pedidos ENABLE ROW LEVEL SECURITY;
 
--- Policy: leitura pública (cliente consulta o próprio pedido por número)
-CREATE POLICY "pedidos_select_public" ON public.pedidos
-  FOR SELECT USING (true);
+-- Policy: leitura restrita a admin/moderador autenticado. O cliente final
+-- NÃO lê a tabela diretamente (isso permitiria, via chave anon, baixar todos
+-- os pedidos de todo mundo com uma query sem filtro). A consulta pública de
+-- UM pedido pelo número acontece pela função get_pedido_by_numero() abaixo.
+DROP POLICY IF EXISTS "pedidos_select_public" ON public.pedidos;
+CREATE POLICY "pedidos_select_admin" ON public.pedidos
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid()
+        AND role IN ('admin', 'moderador')
+    )
+  );
 
--- Policy: inserção pública (qualquer pessoa pode fazer um pedido)
+-- Policy: inserção pública (qualquer pessoa pode fazer um pedido), mas só com
+-- os valores iniciais válidos — impede que alguém insira via API um pedido
+-- já marcado como pago/com comprovante.
+DROP POLICY IF EXISTS "pedidos_insert_public" ON public.pedidos;
 CREATE POLICY "pedidos_insert_public" ON public.pedidos
-  FOR INSERT WITH CHECK (true);
+  FOR INSERT WITH CHECK (
+    status = 'aguardando_pagamento'
+    AND comprovante IS NULL
+    AND "comprovanteAt" IS NULL
+  );
 
--- Policy: atualização pública (envio de comprovante pelo cliente)
-CREATE POLICY "pedidos_update_public" ON public.pedidos
-  FOR UPDATE USING (true);
+-- Policy: atualização restrita a admin/moderador autenticado. O envio de
+-- comprovante pelo cliente final passa pela função
+-- update_comprovante_by_numero() abaixo (SECURITY DEFINER), que só altera os
+-- campos de comprovante do próprio pedido — nunca a tabela inteira.
+DROP POLICY IF EXISTS "pedidos_update_public" ON public.pedidos;
+CREATE POLICY "pedidos_update_admin" ON public.pedidos
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid()
+        AND role IN ('admin', 'moderador')
+    )
+  );
 
 -- Policy: exclusão apenas para admin/moderador autenticado
+DROP POLICY IF EXISTS "pedidos_delete_admin" ON public.pedidos;
 CREATE POLICY "pedidos_delete_admin" ON public.pedidos
   FOR DELETE USING (
     EXISTS (
@@ -137,6 +167,45 @@ CREATE POLICY "pedidos_delete_admin" ON public.pedidos
 
 
 -- ==========================
+-- 3b. FUNÇÕES PÚBLICAS (SECURITY DEFINER)
+--    Substituem o antigo acesso direto (SELECT/UPDATE) da chave anon à
+--    tabela inteira: expõem só a operação pontual que o cliente final
+--    precisa — consultar o PRÓPRIO pedido pelo número, ou enviar o
+--    comprovante do PRÓPRIO pedido — sem permitir leitura/gravação de
+--    pedidos de outras pessoas.
+-- ==========================
+
+CREATE OR REPLACE FUNCTION public.get_pedido_by_numero(p_numero TEXT)
+RETURNS SETOF public.pedidos
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT * FROM public.pedidos WHERE "numeroPedido" = p_numero;
+$$;
+
+REVOKE ALL ON FUNCTION public.get_pedido_by_numero(TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_pedido_by_numero(TEXT) TO anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.update_comprovante_by_numero(p_numero TEXT, p_comprovante TEXT)
+RETURNS SETOF public.pedidos
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  UPDATE public.pedidos
+  SET comprovante = p_comprovante,
+      "comprovanteAt" = NOW(),
+      status = 'comprovante_enviado'
+  WHERE "numeroPedido" = p_numero
+  RETURNING *;
+$$;
+
+REVOKE ALL ON FUNCTION public.update_comprovante_by_numero(TEXT, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.update_comprovante_by_numero(TEXT, TEXT) TO anon, authenticated;
+
+
+-- ==========================
 -- 4. GRANT DE PERMISSÕES
 --    Obrigatório para tabelas criadas via SQL
 --    (dashboard cria automático; SQL não cria)
@@ -145,8 +214,13 @@ CREATE POLICY "pedidos_delete_admin" ON public.pedidos
 -- profiles: authenticated pode ler o próprio perfil e inserir
 GRANT SELECT, INSERT, UPDATE ON public.profiles TO authenticated;
 
--- pedidos: anon pode criar pedido e enviar comprovante; authenticated tem acesso total
-GRANT SELECT, INSERT, UPDATE ON public.pedidos TO anon;
+-- pedidos: anon só pode criar pedido (INSERT). Consulta e envio de
+-- comprovante do cliente final passam pelas funções SECURITY DEFINER acima,
+-- não por SELECT/UPDATE direto na tabela (que exigiria abrir a tabela
+-- inteira para a chave anon). authenticated (admin/moderador) tem acesso
+-- total via policy.
+REVOKE SELECT, UPDATE ON public.pedidos FROM anon;
+GRANT INSERT ON public.pedidos TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.pedidos TO authenticated;
 
 -- sequência do numeroPedido
@@ -177,6 +251,7 @@ SET allowed_mime_types = ARRAY['image/jpeg', 'image/jpg', 'image/png', 'applicat
 WHERE id = 'comprovantes';
 
 -- Policy: upload público (clientes enviam sem login)
+DROP POLICY IF EXISTS "comprovantes_insert_public" ON storage.objects;
 CREATE POLICY "comprovantes_insert_public" ON storage.objects
   FOR INSERT WITH CHECK (bucket_id = 'comprovantes');
 
@@ -190,6 +265,7 @@ CREATE POLICY "comprovantes_update_public" ON storage.objects
   WITH CHECK (bucket_id = 'comprovantes');
 
 -- Policy: leitura para usuário autenticado (admin vê via URL assinada)
+DROP POLICY IF EXISTS "comprovantes_select_auth" ON storage.objects;
 CREATE POLICY "comprovantes_select_auth" ON storage.objects
   FOR SELECT USING (
     bucket_id = 'comprovantes'
@@ -197,6 +273,7 @@ CREATE POLICY "comprovantes_select_auth" ON storage.objects
   );
 
 -- Policy: exclusão para admin/moderador
+DROP POLICY IF EXISTS "comprovantes_delete_admin" ON storage.objects;
 CREATE POLICY "comprovantes_delete_admin" ON storage.objects
   FOR DELETE USING (
     bucket_id = 'comprovantes'

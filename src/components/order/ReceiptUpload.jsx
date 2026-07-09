@@ -54,7 +54,7 @@ export default function ReceiptUpload({ order, onSuccess }) {
     if (!file || submittingRef.current) return
     submittingRef.current = true
     try {
-      const path = await uploadComprovante(file, order.id, order.numeroPedido)
+      const path = await uploadComprovante(file, order.numeroPedido)
       if (path) {
         setFailed(false)
         setDone(true)
