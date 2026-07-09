@@ -211,8 +211,15 @@ GRANT EXECUTE ON FUNCTION public.update_comprovante_by_numero(TEXT, TEXT) TO ano
 --    (dashboard cria automático; SQL não cria)
 -- ==========================
 
--- profiles: authenticated pode ler o próprio perfil e inserir
+-- profiles: authenticated pode ler o próprio perfil e inserir. anon tambem
+-- precisa do GRANT de SELECT (mesmo sem nunca enxergar nenhuma linha, pois
+-- profiles_select_own exige auth.uid() = id e anon nao tem sessao) porque as
+-- policies pedidos_select_admin/pedidos_update_admin fazem um EXISTS contra
+-- profiles - sem esse GRANT, o Postgres barra com "permission denied for
+-- table profiles" ja no INSERT do pedido (o INSERT do PostgREST sempre volta
+-- com RETURNING *, que aciona a policy de SELECT de pedidos).
 GRANT SELECT, INSERT, UPDATE ON public.profiles TO authenticated;
+GRANT SELECT ON public.profiles TO anon;
 
 -- pedidos: anon só pode criar pedido (INSERT). Consulta e envio de
 -- comprovante do cliente final passam pelas funções SECURITY DEFINER acima,
