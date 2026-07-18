@@ -215,12 +215,11 @@ RLS: leitura, inserção e atualização públicas (`USING (true)` / `WITH CHECK
 |---|---|---|---|
 | `VITE_SUPABASE_URL` | ✅ | `src/lib/supabase.js` | obrigatória para o site funcionar com dados reais |
 | `VITE_SUPABASE_ANON_KEY` | ✅ | `src/lib/supabase.js` | chave anônima/publicável — segura para expor no front-end (protegida por RLS) |
-| `VITE_WHATSAPP_NUMBER` | ✅ | `WhatsAppButton.jsx`, `ContactSection.jsx` | tem fallback hardcoded (`5533999186633`) se ausente |
-| `VITE_APP_NAME` | ❌ | — | declarada em `.env`/`.env.example` mas não referenciada no código |
-| `VITE_APP_URL` | ❌ | — | idem |
-| `VITE_WHATSAPP_NUMBER_2` | ❌ | — | idem (o segundo número aparece hardcoded no `Footer.jsx`) |
-| `VITE_INSTAGRAM_USER` | ❌ | — | idem (`@umadgov` está hardcoded no `Footer.jsx`/`ContactSection.jsx`) |
-| `VITE_SHIRT_PRICE` | ❌ | — | idem (`SHIRT_PRICE = 50` está hardcoded em `src/data/mockOrders.js`) |
+| `VITE_SUPABASE_STORAGE_BUCKET` | ✅ | `src/lib/supabase.js` | fallback hardcoded (`comprovantes`) se ausente |
+| `VITE_WHATSAPP_NUMBER` | ✅ | `WhatsAppButton.jsx`, `ContactSection.jsx`, `Footer.jsx`, `ReceiptUpload.jsx` | fallback hardcoded (`5533999186633`) se ausente |
+| `VITE_WHATSAPP_NUMBER_2` | ✅ | `ContactSection.jsx`, `Footer.jsx` | fallback hardcoded (`5533991060488`) se ausente |
+| `VITE_INSTAGRAM_USER` | ✅ | `ContactSection.jsx`, `Footer.jsx` | fallback hardcoded (`umadgov`) se ausente |
+| `VITE_SHIRT_PRICE` | ✅ | `src/data/mockOrders.js` | fallback hardcoded (`50`) se ausente |
 
 Arquivos:
 - **`.env`** — versionado, serve de template com valores vazios/exemplo.

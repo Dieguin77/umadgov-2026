@@ -75,14 +75,15 @@ npm run dev
 
 ## Variáveis de Ambiente
 
-| Variável | Obrigatória | Descrição |
-|----------|-------------|-----------|
-| `VITE_SUPABASE_URL` | Sim, para dados reais | URL do projeto Supabase |
-| `VITE_SUPABASE_ANON_KEY` | Sim, para dados reais | Chave anônima/publicável (protegida por RLS) |
-| `VITE_SUPABASE_STORAGE_BUCKET` | Não | Bucket de comprovantes (padrão: `comprovantes`) |
-| `VITE_WHATSAPP_NUMBER` | Não | Número exibido no botão de WhatsApp |
-| `VITE_INSTAGRAM_USER` | Não | Usuário do Instagram exibido no rodapé |
-| `VITE_SHIRT_PRICE` | Não | Preço unitário da camisa |
+| Variável | Obrigatória | Descrição | Padrão |
+|----------|-------------|-----------|--------|
+| `VITE_SUPABASE_URL` | Sim, para dados reais | URL do projeto Supabase | — |
+| `VITE_SUPABASE_ANON_KEY` | Sim, para dados reais | Chave anônima/publicável (protegida por RLS) | — |
+| `VITE_SUPABASE_STORAGE_BUCKET` | Não | Bucket de comprovantes | `comprovantes` |
+| `VITE_WHATSAPP_NUMBER` | Não | Número principal exibido no botão de WhatsApp | `5533999186633` |
+| `VITE_WHATSAPP_NUMBER_2` | Não | Número secundário de WhatsApp (rodapé) | `5533991060488` |
+| `VITE_INSTAGRAM_USER` | Não | Usuário do Instagram exibido no rodapé | `umadgov` |
+| `VITE_SHIRT_PRICE` | Não | Preço unitário da camisa (R$) | `50` |
 
 ## Estrutura do Banco de Dados
 
