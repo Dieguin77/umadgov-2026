@@ -185,6 +185,20 @@ export const orderService = {
     return localOrders[idx]
   },
 
+  // Chama a serverless function que cria o link de checkout na InfinitePay.
+  // O valor cobrado é sempre resolvido no servidor a partir do pedido salvo
+  // no Supabase — este método só envia o número do pedido.
+  async createCardCheckout(numeroPedido) {
+    const res = await fetch('/api/infinitepay/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ numeroPedido }),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) throw new Error(data.error || 'Não foi possível iniciar o pagamento por cartão')
+    return data.checkoutUrl
+  },
+
   async getDashboardStats() {
     const orders = await this.getAllOrders()
     const total = orders.length

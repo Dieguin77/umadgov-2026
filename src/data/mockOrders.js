@@ -41,10 +41,12 @@ export const SHIRT_MODEL_LABELS = {
 
 export const FORMA_PAGAMENTO = {
   PIX: 'pix',
+  CARTAO: 'cartao',
 }
 
 export const FORMA_PAGAMENTO_LABELS = {
   pix: 'PIX',
+  cartao: 'Cartão de Crédito',
 }
 
 export const mockOrders = [

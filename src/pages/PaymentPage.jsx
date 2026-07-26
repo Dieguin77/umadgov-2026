@@ -3,8 +3,10 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Upload, CheckCircle } from 'lucide-react'
 import PaymentInstructions from '@/components/order/PaymentInstructions'
+import CardCheckoutRedirect from '@/components/order/CardCheckoutRedirect'
 import ReceiptUpload from '@/components/order/ReceiptUpload'
 import { orderService } from '@/services/orderService'
+import { STATUS } from '@/data/mockOrders'
 
 export default function PaymentPage() {
   const [params] = useSearchParams()
@@ -75,28 +77,51 @@ export default function PaymentPage() {
           </div>
 
           <div className="p-6 sm:p-8 space-y-8">
-            {/* Payment instructions */}
-            <div>
-              <h2 className="text-lg font-bold text-lavanda-900 mb-4">1. Realize o PIX</h2>
-              <PaymentInstructions order={order} />
-            </div>
+            {order.formaPagamento === 'cartao' ? (
+              order.status !== STATUS.AGUARDANDO_PAGAMENTO ? (
+                <div className="flex flex-col items-center gap-3 text-center py-6">
+                  <CheckCircle size={40} className="text-green-500" />
+                  <p className="font-bold text-lavanda-900">Pagamento já confirmado</p>
+                  <p className="text-lavanda-500 text-sm">
+                    Acompanhe o andamento do seu pedido na consulta de status.
+                  </p>
+                  <Link
+                    to={`/consulta?pedido=${order.numeroPedido}`}
+                    className="text-lavanda-600 font-semibold hover:underline text-sm"
+                  >
+                    Ver status do pedido
+                  </Link>
+                </div>
+              ) : (
+                <CardCheckoutRedirect order={order} />
+              )
+            ) : (
+              <>
+                {/* Payment instructions */}
+                <div>
+                  <h2 className="text-lg font-bold text-lavanda-900 mb-4">1. Realize o PIX</h2>
+                  <PaymentInstructions order={order} />
+                </div>
 
-            {/* Upload receipt */}
-            <div>
-              <h2 className="text-lg font-bold text-lavanda-900 mb-4">2. Comprovante (opcional)</h2>
-              <ReceiptUpload
-                order={order}
-                onSuccess={() => {
-                  setUploadDone(true)
-                  setTimeout(() => navigate(`/consulta?pedido=${order.numeroPedido}`), 3000)
-                }}
-              />
-            </div>
+                {/* Upload receipt */}
+                <div>
+                  <h2 className="text-lg font-bold text-lavanda-900 mb-4">2. Comprovante (opcional)</h2>
+                  <ReceiptUpload
+                    order={order}
+                    onSuccess={() => {
+                      setUploadDone(true)
+                      setTimeout(() => navigate(`/consulta?pedido=${order.numeroPedido}`), 3000)
+                    }}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </motion.div>
 
         <p className="text-center text-lavanda-400 text-xs mt-6">
-          Pedido <strong>{order.numeroPedido}</strong> · Aguardando pagamento
+          Pedido <strong>{order.numeroPedido}</strong> ·{' '}
+          {order.status === STATUS.AGUARDANDO_PAGAMENTO ? 'Aguardando pagamento' : 'Pagamento confirmado'}
         </p>
       </div>
     </div>

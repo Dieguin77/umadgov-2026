@@ -88,10 +88,12 @@ CREATE TABLE IF NOT EXISTS public.pedidos (
                        'entregue'
                      )),
   "formaPagamento" TEXT NOT NULL DEFAULT 'pix'
-                     CHECK ("formaPagamento" IN ('pix')),
+                     CHECK ("formaPagamento" IN ('pix', 'cartao')),
   comprovante      TEXT,
   "comprovanteAt"  TIMESTAMPTZ,
   observacoes      TEXT,
+  "transacaoId"    TEXT,
+  "valorPago"      NUMERIC(10,2),
   "createdAt"      TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -106,6 +108,38 @@ ALTER TABLE public.pedidos
 ALTER TABLE public.pedidos
   ADD CONSTRAINT pedidos_shirtmodel_check
   CHECK ("shirtModel" IN ('masculino', 'baby_look', 'infantil'));
+
+-- Migração idempotente: colunas usadas pelo pagamento por cartão
+-- (InfinitePay) em bancos já existentes.
+ALTER TABLE public.pedidos
+  ADD COLUMN IF NOT EXISTS "transacaoId" TEXT;
+ALTER TABLE public.pedidos
+  ADD COLUMN IF NOT EXISTS "valorPago" NUMERIC(10,2);
+
+-- Migração idempotente: libera 'cartao' na constraint de formaPagamento
+-- (antes só aceitava 'pix'). Usa um bloco dinâmico em vez de
+-- DROP CONSTRAINT IF EXISTS com nome fixo porque o nome gerado
+-- automaticamente pelo Postgres para o CHECK original pode variar.
+DO $$
+DECLARE
+  c RECORD;
+BEGIN
+  FOR c IN
+    SELECT con.conname
+    FROM pg_constraint con
+    JOIN pg_class rel ON rel.oid = con.conrelid
+    JOIN pg_attribute att ON att.attrelid = con.conrelid AND att.attnum = ANY(con.conkey)
+    WHERE rel.relname = 'pedidos'
+      AND con.contype = 'c'
+      AND att.attname = 'formaPagamento'
+  LOOP
+    EXECUTE format('ALTER TABLE public.pedidos DROP CONSTRAINT %I', c.conname);
+  END LOOP;
+END $$;
+
+ALTER TABLE public.pedidos
+  ADD CONSTRAINT pedidos_formapagamento_check
+  CHECK ("formaPagamento" IN ('pix', 'cartao'));
 
 -- Trigger: atribui numeroPedido automaticamente ao inserir
 DROP TRIGGER IF EXISTS trg_set_numero_pedido ON public.pedidos;
@@ -233,6 +267,38 @@ $$;
 
 REVOKE ALL ON FUNCTION public.update_comprovante_by_numero(TEXT, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.update_comprovante_by_numero(TEXT, TEXT) TO anon, authenticated;
+
+-- Ponto único de confirmação automática de pagamento por cartão
+-- (InfinitePay). Chamada pela serverless function api/infinitepay/webhook.js
+-- depois que ela já revalidou o pagamento direto na InfinitePay (payment_check)
+-- — esta função nunca deve ser chamada só com base no payload do webhook.
+-- Idempotente: o WHERE status = 'aguardando_pagamento' garante que uma
+-- notificação repetida (a InfinitePay reenvia em caso de erro) não tem
+-- efeito, e nunca retrocede um pedido que já avançou no fluxo (ex.: já
+-- separado para retirada).
+CREATE OR REPLACE FUNCTION public.mark_pedido_pago_infinitepay(
+  p_numero_pedido TEXT,
+  p_transaction_nsu TEXT,
+  p_valor_pago NUMERIC,
+  p_forma_pagamento TEXT DEFAULT 'cartao'
+)
+RETURNS SETOF public.pedidos
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  UPDATE public.pedidos
+  SET status = 'pagamento_aprovado',
+      "formaPagamento" = p_forma_pagamento,
+      "transacaoId" = p_transaction_nsu,
+      "valorPago" = p_valor_pago
+  WHERE "numeroPedido" = p_numero_pedido
+    AND status = 'aguardando_pagamento'
+  RETURNING *;
+$$;
+
+REVOKE ALL ON FUNCTION public.mark_pedido_pago_infinitepay(TEXT, TEXT, NUMERIC, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.mark_pedido_pago_infinitepay(TEXT, TEXT, NUMERIC, TEXT) TO anon, authenticated;
 
 
 -- ==========================

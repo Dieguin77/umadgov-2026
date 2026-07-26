@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
-import { User, Phone, Church, Ruler, Hash, ShoppingBag, Smartphone, Shirt, Baby } from 'lucide-react'
+import { User, Phone, Church, Ruler, Hash, ShoppingBag, Smartphone, CreditCard, Shirt, Baby } from 'lucide-react'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
 import Button from '@/components/ui/Button'
@@ -9,8 +9,29 @@ import SelectableCards from '@/components/ui/SelectableCards'
 import { validators } from '@/utils/validators'
 import { formatPhoneInput, formatCurrency } from '@/utils/formatters'
 import { orderService } from '@/services/orderService'
-import { SHIRT_SIZES, SHIRT_PRICE, SHIRT_MODEL_LABELS } from '@/data/mockOrders'
+import { SHIRT_SIZES, SHIRT_PRICE, SHIRT_MODEL_LABELS, FORMA_PAGAMENTO_LABELS } from '@/data/mockOrders'
 import toast from 'react-hot-toast'
+
+const PAYMENT_OPTIONS = [
+  {
+    value: 'pix',
+    label: 'PIX',
+    desc: 'Pague online agora',
+    icon: Smartphone,
+    color: 'text-green-600',
+    bg: 'bg-green-50',
+    border: 'border-green-500',
+  },
+  {
+    value: 'cartao',
+    label: 'Cartão de Crédito',
+    desc: 'Em até 3x, via InfinitePay',
+    icon: CreditCard,
+    color: 'text-blue-600',
+    bg: 'bg-blue-50',
+    border: 'border-blue-500',
+  },
+]
 
 const SHIRT_MODEL_OPTIONS = [
   {
@@ -52,11 +73,12 @@ export default function OrderForm({ onSuccess }) {
     setValue,
     formState: { errors },
   } = useForm({
-    defaultValues: { quantidade: 1, tamanho: '', shirtModel: '', observacoes: '' },
+    defaultValues: { quantidade: 1, tamanho: '', shirtModel: '', formaPagamento: 'pix', observacoes: '' },
   })
 
   const quantidade = Number(watch('quantidade') || 1)
   const shirtModel = watch('shirtModel')
+  const formaPagamento = watch('formaPagamento')
   const total = quantidade * SHIRT_PRICE
 
   const handlePhoneInput = (e) => {
@@ -73,7 +95,7 @@ export default function OrderForm({ onSuccess }) {
         shirtModel: data.shirtModel,
         tamanho: data.tamanho,
         quantidade: Number(data.quantidade),
-        formaPagamento: 'pix',
+        formaPagamento: data.formaPagamento,
         observacoes: data.observacoes?.trim() || null,
       })
       toast.success('Pedido criado com sucesso!')
@@ -180,15 +202,16 @@ export default function OrderForm({ onSuccess }) {
       {/* 5. Payment method */}
       <div>
         <label className="text-sm font-semibold text-lavanda-900 block mb-3">
-          Forma de Pagamento
+          Forma de Pagamento <span className="text-red-500">*</span>
         </label>
-        <div className="flex items-center gap-3 p-4 rounded-xl border-2 border-green-500 bg-green-50">
-          <Smartphone size={22} className="text-green-600" />
-          <div>
-            <p className="font-bold text-sm text-lavanda-900">PIX</p>
-            <p className="text-xs text-lavanda-600">Pague online agora</p>
-          </div>
-        </div>
+        <SelectableCards
+          options={PAYMENT_OPTIONS}
+          register={register}
+          name="formaPagamento"
+          validation={{ required: 'Selecione a forma de pagamento.' }}
+          watchValue={formaPagamento}
+          error={errors.formaPagamento?.message}
+        />
       </div>
 
       {/* Order Summary */}
@@ -210,14 +233,18 @@ export default function OrderForm({ onSuccess }) {
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-lavanda-500">Pagamento</span>
-            <span className="text-lavanda-700">PIX</span>
+            <span className="text-lavanda-700">{FORMA_PAGAMENTO_LABELS[formaPagamento] || '—'}</span>
           </div>
           <div className="border-t border-lavanda-200 pt-2 flex justify-between font-black text-lg">
             <span className="text-lavanda-800">Total</span>
             <span className="text-dourado-600">{formatCurrency(total)}</span>
           </div>
         </div>
-        <p className="text-lavanda-400 text-xs">Após o pedido você receberá as instruções de pagamento via Pix</p>
+        <p className="text-lavanda-400 text-xs">
+          {formaPagamento === 'cartao'
+            ? 'Após o pedido você será redirecionado para pagar com cartão em ambiente seguro da InfinitePay'
+            : 'Após o pedido você receberá as instruções de pagamento via Pix'}
+        </p>
       </motion.div>
 
       <Button

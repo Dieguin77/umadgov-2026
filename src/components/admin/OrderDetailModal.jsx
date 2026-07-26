@@ -50,6 +50,9 @@ export default function OrderDetailModal({ order, isOpen, onClose, onUpdateStatu
               { label: 'Quantidade', value: `${order.quantidade}x` },
               { label: 'Valor Total', value: formatCurrency(order.valor) },
               { label: 'Forma de Pagamento', value: FORMA_PAGAMENTO_LABELS[order.formaPagamento] || '—' },
+              ...(order.transacaoId
+                ? [{ label: 'ID Transação (InfinitePay)', value: order.transacaoId }]
+                : []),
             ].map(item => (
               <div key={item.label} className="bg-gray-50 rounded-xl p-3">
                 <p className="text-xs text-lavanda-400 mb-1">{item.label}</p>

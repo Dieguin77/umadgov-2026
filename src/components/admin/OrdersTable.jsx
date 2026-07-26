@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Eye, Edit, Trash2, ChevronUp, ChevronDown, FileText, Receipt, Smartphone } from 'lucide-react'
+import { Eye, Edit, Trash2, ChevronUp, ChevronDown, FileText, Receipt, Smartphone, CreditCard } from 'lucide-react'
 import { StatusBadge } from '@/components/ui/Badge'
 import { formatCurrency, formatDateTime } from '@/utils/formatters'
 import { FORMA_PAGAMENTO_LABELS, SHIRT_MODEL_LABELS } from '@/data/mockOrders'
@@ -10,6 +10,7 @@ import ComprovanteModal from './ComprovanteModal'
 
 const PAYMENT_BADGES = {
   pix: { label: 'PIX', Icon: Smartphone, cls: 'bg-green-100 text-green-700' },
+  cartao: { label: 'Cartão', Icon: CreditCard, cls: 'bg-blue-100 text-blue-700' },
 }
 
 function PaymentBadge({ forma }) {
