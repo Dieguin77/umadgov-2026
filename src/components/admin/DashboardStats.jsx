@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { ShoppingBag, Package, Clock, CheckCircle, FileCheck, TrendingUp } from 'lucide-react'
 import { formatCurrency } from '@/utils/formatters'
 
-function StatCard({ icon: Icon, title, value, color, bgLight, delay, sub }) {
+function StatCard({ icon: Icon, title, value, color, delay, sub }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
