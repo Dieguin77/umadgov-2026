@@ -24,6 +24,23 @@ function PaymentBadge({ forma }) {
   )
 }
 
+function SortIcon({ col, sortKey, sortDir }) {
+  return sortKey === col
+    ? (sortDir === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)
+    : <ChevronDown size={14} className="opacity-30" />
+}
+
+function ThSort({ col, children, className = '', sortKey, sortDir, onSort }) {
+  return (
+    <th
+      className={`text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider cursor-pointer hover:text-lavanda-700 select-none ${className}`}
+      onClick={() => onSort(col)}
+    >
+      <span className="flex items-center gap-1">{children}<SortIcon col={col} sortKey={sortKey} sortDir={sortDir} /></span>
+    </th>
+  )
+}
+
 export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateOrder, onDeleteOrder }) {
   const [selected, setSelected] = useState(null)
   const [editing, setEditing] = useState(null)
@@ -43,21 +60,6 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
     if (typeof bv === 'string') bv = bv.toLowerCase()
     return sortDir === 'asc' ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1)
   })
-
-  const SortIcon = ({ col }) => (
-    sortKey === col
-      ? (sortDir === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)
-      : <ChevronDown size={14} className="opacity-30" />
-  )
-
-  const ThSort = ({ col, children, className = '' }) => (
-    <th
-      className={`text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider cursor-pointer hover:text-lavanda-700 select-none ${className}`}
-      onClick={() => toggleSort(col)}
-    >
-      <span className="flex items-center gap-1">{children}<SortIcon col={col} /></span>
-    </th>
-  )
 
   if (loading) {
     return (
@@ -86,16 +88,16 @@ export default function OrdersTable({ orders, loading, onUpdateStatus, onUpdateO
           <table className="w-full min-w-[700px]">
             <thead className="bg-lavanda-50 border-b border-lavanda-100">
               <tr>
-                <ThSort col="numeroPedido">Pedido</ThSort>
-                <ThSort col="nome">Nome</ThSort>
+                <ThSort col="numeroPedido" sortKey={sortKey} sortDir={sortDir} onSort={toggleSort}>Pedido</ThSort>
+                <ThSort col="nome" sortKey={sortKey} sortDir={sortDir} onSort={toggleSort}>Nome</ThSort>
                 <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden md:table-cell">Congregação</th>
-                <ThSort col="tamanho">Tam.</ThSort>
+                <ThSort col="tamanho" sortKey={sortKey} sortDir={sortDir} onSort={toggleSort}>Tam.</ThSort>
                 <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden sm:table-cell">Modelo</th>
-                <ThSort col="quantidade">Qtd</ThSort>
-                <ThSort col="valor">Valor</ThSort>
+                <ThSort col="quantidade" sortKey={sortKey} sortDir={sortDir} onSort={toggleSort}>Qtd</ThSort>
+                <ThSort col="valor" sortKey={sortKey} sortDir={sortDir} onSort={toggleSort}>Valor</ThSort>
                 <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden sm:table-cell">Pagamento</th>
                 <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden md:table-cell">Comprovante</th>
-                <ThSort col="status">Status</ThSort>
+                <ThSort col="status" sortKey={sortKey} sortDir={sortDir} onSort={toggleSort}>Status</ThSort>
                 <th className="text-left px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider hidden lg:table-cell">Data</th>
                 <th className="px-4 py-3 text-xs font-bold text-lavanda-500 uppercase tracking-wider text-right">Ações</th>
               </tr>
