@@ -122,7 +122,7 @@ export default function ContactSection() {
             <Clock size={20} className="text-lavanda-500 shrink-0" />
             <div>
               <p className="text-xs text-lavanda-400">Prazo de encomenda</p>
-              <p className="font-bold text-lavanda-800">Até 23/09/2026</p>
+              <p className="font-bold text-lavanda-800">Até 03/10/2026</p>
             </div>
           </div>
           <div className="w-px bg-lavanda-100 hidden sm:block" />

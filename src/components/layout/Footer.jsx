@@ -91,7 +91,7 @@ export default function Footer() {
 
             <div className="mt-5">
               <p className="text-lavanda-500 text-xs mb-1">Prazo de encomenda:</p>
-              <p className="text-dourado-400 font-bold">23/09/2026</p>
+              <p className="text-dourado-400 font-bold">03/10/2026</p>
             </div>
           </div>
         </div>

@@ -65,7 +65,7 @@ export default function SizesSection() {
             Pronto para encomendar?
           </h3>
           <p className="text-lavanda-300 mb-7 max-w-md mx-auto">
-            Garanta a sua camisa antes do prazo de <strong className="text-dourado-400">23/09/2026</strong>. Quantidade limitada!
+            Garanta a sua camisa antes do prazo de <strong className="text-dourado-400">03/10/2026</strong>. Quantidade limitada!
           </p>
           <Link
             to="/pedido"

@@ -96,7 +96,7 @@ export default function HeroSection() {
               <div className="w-px bg-white/20 hidden sm:block" />
               <div className="text-center">
                 <p className="text-lavanda-400 text-xs uppercase tracking-wider mb-1">Prazo</p>
-                <p className="text-dourado-400 font-bold text-lg">23/09/2026</p>
+                <p className="text-dourado-400 font-bold text-lg">03/10/2026</p>
               </div>
             </motion.div>
 

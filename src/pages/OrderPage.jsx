@@ -41,7 +41,7 @@ export default function OrderPage() {
                 </div>
                 <div className="w-px bg-white/20" />
                 <div className="text-center">
-                  <p className="text-white font-black text-xl">23/09</p>
+                  <p className="text-white font-black text-xl">03/10</p>
                   <p className="text-lavanda-300 text-xs">prazo</p>
                 </div>
               </div>

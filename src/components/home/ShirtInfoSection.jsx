@@ -76,7 +76,7 @@ export default function ShirtInfoSection() {
         {/* Info cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           <InfoCard icon={DollarSign} title="Valor por unidade" value="R$ 50,00" accent="gold" delay={0} />
-          <InfoCard icon={Calendar} title="Prazo de encomenda" value="23/09/2026" accent="lavanda" delay={0.1} />
+          <InfoCard icon={Calendar} title="Prazo de encomenda" value="03/10/2026" accent="lavanda" delay={0.1} />
           <InfoCard icon={MapPin} title="Local de retirada" value="Rua Afonso Pena, 3384 | Centro" accent="lavanda" delay={0.2} />
           <InfoCard icon={Ruler} title="Tamanhos disponíveis" value="P · M · G · GG · XG" accent="gold" delay={0.3} />
         </div>
