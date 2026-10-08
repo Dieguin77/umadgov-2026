@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { ZoomIn, ZoomOut, X, Ruler, BookOpen, RotateCcw, ChevronRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
 
 const CATEGORIES = [
   {
@@ -232,18 +231,10 @@ function MeasuresModal({ isOpen, onClose }) {
             </div>
 
             {/* Modal footer */}
-            <div className="px-5 py-4 border-t border-lavanda-50 bg-lavanda-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-              <p className="text-lavanda-400 text-xs text-center sm:text-left">
+            <div className="px-5 py-4 border-t border-lavanda-50 bg-lavanda-50/50 flex items-center justify-center gap-3 shrink-0">
+              <p className="text-lavanda-400 text-xs text-center">
                 Medidas em centímetros (cm) · Em caso de dúvida, prefira o tamanho maior
               </p>
-              <Link
-                to="/pedido"
-                onClick={onClose}
-                className="flex items-center gap-2 bg-lavanda-600 hover:bg-lavanda-700 text-white font-bold px-5 py-2.5 rounded-xl transition-colors text-sm shrink-0"
-              >
-                Encomendar agora
-                <ChevronRight size={15} />
-              </Link>
             </div>
           </motion.div>
         </div>

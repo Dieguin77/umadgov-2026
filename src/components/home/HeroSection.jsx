@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShoppingBag, ChevronDown, Star } from 'lucide-react'
+import { ChevronDown, Star } from 'lucide-react'
 import camisaMockup from '@/assets/images/shirts/camisa-mockup.png'
 import logoOficial from '@/assets/logo/logooficial.png'
 
@@ -102,13 +102,6 @@ export default function HeroSection() {
 
             {/* CTA Buttons */}
             <motion.div variants={fadeUp} className="flex flex-wrap justify-center lg:justify-start gap-4">
-              <Link
-                to="/pedido"
-                className="inline-flex items-center gap-2 bg-dourado-600 hover:bg-dourado-700 text-white font-bold px-8 py-4 rounded-xl shadow-gold-lg hover:shadow-gold transition-all duration-200 text-lg animate-pulse-gold"
-              >
-                <ShoppingBag size={22} />
-                Encomendar Agora
-              </Link>
               <Link
                 to="/consulta"
                 className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-7 py-4 rounded-xl backdrop-blur-sm transition-all duration-200"

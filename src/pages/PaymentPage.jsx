@@ -47,7 +47,6 @@ export default function PaymentPage() {
           <p className="text-5xl mb-4">😕</p>
           <h2 className="text-2xl font-black text-lavanda-900 mb-2">Pedido não encontrado</h2>
           <p className="text-lavanda-500 mb-6">Verifique o número do pedido e tente novamente.</p>
-          <Link to="/pedido" className="text-lavanda-600 font-semibold hover:underline">Fazer novo pedido</Link>
         </div>
       </div>
     )

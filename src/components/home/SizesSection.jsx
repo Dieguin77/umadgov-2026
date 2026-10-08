@@ -1,6 +1,5 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { Link } from 'react-router-dom'
 import { SHIRT_SIZES } from '@/data/mockOrders'
 
 const sizeDescriptions = {
@@ -53,27 +52,6 @@ export default function SizesSection() {
             </motion.div>
           ))}
         </div>
-
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="text-center bg-gradient-hero rounded-2xl p-10 text-white"
-        >
-          <h3 className="text-2xl sm:text-3xl font-black mb-3">
-            Pronto para encomendar?
-          </h3>
-          <p className="text-lavanda-300 mb-7 max-w-md mx-auto">
-            Garanta a sua camisa antes do prazo de <strong className="text-dourado-400">03/10/2026</strong>. Quantidade limitada!
-          </p>
-          <Link
-            to="/pedido"
-            className="inline-flex items-center gap-2 bg-dourado-600 hover:bg-dourado-700 text-white font-bold px-8 py-4 rounded-xl shadow-gold-lg transition-all duration-200 text-lg"
-          >
-            Encomendar Agora | R$ 50,00
-          </Link>
-        </motion.div>
       </div>
     </section>
   )

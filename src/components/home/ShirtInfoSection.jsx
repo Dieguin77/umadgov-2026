@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { DollarSign, Calendar, MapPin, Ruler, ShoppingBag } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { DollarSign, Calendar, MapPin, Ruler } from 'lucide-react'
 import camisaMockup from '@/assets/images/shirts/camisa-mockup.png'
 import arteVetores from '@/assets/images/shirts/arte-vetores.png'
 
@@ -155,14 +154,6 @@ export default function ShirtInfoSection() {
                 </div>
               ))}
             </div>
-
-            <Link
-              to="/pedido"
-              className="inline-flex items-center gap-2 bg-gradient-lavanda text-white font-bold px-7 py-3.5 rounded-xl shadow-lavanda hover:shadow-lavanda-lg transition-all duration-200"
-            >
-              <ShoppingBag size={20} />
-              Fazer meu pedido | R$ 50,00
-            </Link>
           </motion.div>
         </div>
       </div>

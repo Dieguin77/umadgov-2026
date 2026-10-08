@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ShoppingBag } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import logoOficial from '@/assets/logo/logooficial.png'
 
 const navLinks = [
   { to: '/', label: 'Início' },
-  { to: '/pedido', label: 'Encomendar' },
   { to: '/consulta', label: 'Meu Pedido' },
 ]
 
@@ -76,17 +75,6 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link
-              to="/pedido"
-              className="flex items-center gap-2 bg-dourado-600 hover:bg-dourado-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-gold hover:shadow-gold-lg transition-all duration-200"
-            >
-              <ShoppingBag size={16} />
-              Encomendar
-            </Link>
-          </div>
-
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -124,13 +112,6 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <Link
-                to="/pedido"
-                className="mt-2 flex items-center justify-center gap-2 bg-dourado-600 text-white px-5 py-3 rounded-xl font-bold shadow-gold"
-              >
-                <ShoppingBag size={18} />
-                Encomendar Agora
-              </Link>
             </div>
           </motion.div>
         )}

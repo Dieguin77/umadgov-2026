@@ -39,7 +39,6 @@ export default function Footer() {
             <ul className="space-y-3">
               {[
                 { to: '/', label: 'Início' },
-                { to: '/pedido', label: 'Encomendar' },
                 { to: '/enviar-comprovante', label: 'Enviar Comprovante' },
                 { to: '/consulta', label: 'Consultar Pedido' },
               ].map(link => (
