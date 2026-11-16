@@ -2,8 +2,8 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { Instagram, MapPin, Clock, MessageCircle } from 'lucide-react'
 import { formatPhone } from '@/utils/formatters'
+import { WA_NUMBER } from '@/data/contact'
 
-const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533991060488'
 const IG_USER = import.meta.env.VITE_INSTAGRAM_USER || 'umadgov'
 const WA_MSG = encodeURIComponent('Olá! Gostaria de saber mais sobre a camisa da UMADGOV 2026.')
 

@@ -5,8 +5,7 @@ import { useUpload } from '@/hooks/useUpload'
 import { validateFile } from '@/utils/validators'
 import Button from '@/components/ui/Button'
 import toast from 'react-hot-toast'
-
-const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533991060488'
+import { WA_NUMBER } from '@/data/contact'
 
 export default function ReceiptUpload({ order, onSuccess }) {
   const [file, setFile] = useState(null)

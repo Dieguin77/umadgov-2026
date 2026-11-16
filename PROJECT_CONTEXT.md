@@ -216,9 +216,16 @@ RLS: leitura, inserção e atualização públicas (`USING (true)` / `WITH CHECK
 | `VITE_SUPABASE_URL` | ✅ | `src/lib/supabase.js` | obrigatória para o site funcionar com dados reais |
 | `VITE_SUPABASE_ANON_KEY` | ✅ | `src/lib/supabase.js` | chave anônima/publicável — segura para expor no front-end (protegida por RLS) |
 | `VITE_SUPABASE_STORAGE_BUCKET` | ✅ | `src/lib/supabase.js` | fallback hardcoded (`comprovantes`) se ausente |
-| `VITE_WHATSAPP_NUMBER` | ✅ | `WhatsAppButton.jsx`, `ContactSection.jsx`, `Footer.jsx`, `PaymentPage.jsx`, `ReceiptUpload.jsx` | único número de contato do site; fallback hardcoded (`5533991060488`) se ausente |
 | `VITE_INSTAGRAM_USER` | ✅ | `ContactSection.jsx`, `Footer.jsx` | fallback hardcoded (`umadgov`) se ausente |
 | `VITE_SHIRT_PRICE` | ✅ | `src/data/mockOrders.js` | fallback hardcoded (`50`) se ausente |
+
+> **Número de contato:** o único número do site (botão do WhatsApp, seção de
+> contato, rodapé e envio de comprovante) é a constante `WA_NUMBER` de
+> `src/data/contact.js`, usada por `WhatsAppButton.jsx`, `ContactSection.jsx`,
+> `Footer.jsx`, `PaymentPage.jsx` e `ReceiptUpload.jsx`. Não é variável de
+> ambiente de propósito: uma `VITE_WHATSAPP_NUMBER` antiga no painel da Vercel
+> sobrepunha-se ao valor do código (as variáveis `VITE_WHATSAPP_NUMBER` e
+> `VITE_WHATSAPP_NUMBER_2` que restarem no painel já não são lidas).
 
 Arquivos:
 - **`.env`** — versionado, serve de template com valores vazios/exemplo.

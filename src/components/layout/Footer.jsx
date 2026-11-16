@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 import { Instagram, Phone, MapPin, ExternalLink } from 'lucide-react'
 import logoOficial from '@/assets/logo/logooficial.png'
 import { formatPhone } from '@/utils/formatters'
+import { WA_NUMBER } from '@/data/contact'
 
-const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533991060488'
 const IG_USER = import.meta.env.VITE_INSTAGRAM_USER || 'umadgov'
 
 export default function Footer() {

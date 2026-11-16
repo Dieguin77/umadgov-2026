@@ -80,9 +80,10 @@ npm run dev
 | `VITE_SUPABASE_URL` | Sim, para dados reais | URL do projeto Supabase | — |
 | `VITE_SUPABASE_ANON_KEY` | Sim, para dados reais | Chave anônima/publicável (protegida por RLS) | — |
 | `VITE_SUPABASE_STORAGE_BUCKET` | Não | Bucket de comprovantes | `comprovantes` |
-| `VITE_WHATSAPP_NUMBER` | Não | Número de contato do site (botão de WhatsApp, contato, rodapé e envio de comprovante) | `5533991060488` |
 | `VITE_INSTAGRAM_USER` | Não | Usuário do Instagram exibido no rodapé | `umadgov` |
 | `VITE_SHIRT_PRICE` | Não | Preço unitário da camisa (R$) | `50` |
+
+> O número de contato do site (botão de WhatsApp, contato, rodapé e envio de comprovante) não é variável de ambiente: fica em `src/data/contact.js`.
 
 ## Estrutura do Banco de Dados
 
