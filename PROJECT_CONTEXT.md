@@ -216,8 +216,7 @@ RLS: leitura, inserção e atualização públicas (`USING (true)` / `WITH CHECK
 | `VITE_SUPABASE_URL` | ✅ | `src/lib/supabase.js` | obrigatória para o site funcionar com dados reais |
 | `VITE_SUPABASE_ANON_KEY` | ✅ | `src/lib/supabase.js` | chave anônima/publicável — segura para expor no front-end (protegida por RLS) |
 | `VITE_SUPABASE_STORAGE_BUCKET` | ✅ | `src/lib/supabase.js` | fallback hardcoded (`comprovantes`) se ausente |
-| `VITE_WHATSAPP_NUMBER` | ✅ | `WhatsAppButton.jsx`, `ContactSection.jsx`, `Footer.jsx`, `ReceiptUpload.jsx` | fallback hardcoded (`5533999186633`) se ausente |
-| `VITE_WHATSAPP_NUMBER_2` | ✅ | `ContactSection.jsx`, `Footer.jsx` | fallback hardcoded (`5533991060488`) se ausente |
+| `VITE_WHATSAPP_NUMBER` | ✅ | `WhatsAppButton.jsx`, `ContactSection.jsx`, `Footer.jsx`, `PaymentPage.jsx`, `ReceiptUpload.jsx` | único número de contato do site; fallback hardcoded (`5533991060488`) se ausente |
 | `VITE_INSTAGRAM_USER` | ✅ | `ContactSection.jsx`, `Footer.jsx` | fallback hardcoded (`umadgov`) se ausente |
 | `VITE_SHIRT_PRICE` | ✅ | `src/data/mockOrders.js` | fallback hardcoded (`50`) se ausente |
 

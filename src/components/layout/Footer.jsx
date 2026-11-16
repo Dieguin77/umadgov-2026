@@ -3,8 +3,7 @@ import { Instagram, Phone, MapPin, ExternalLink } from 'lucide-react'
 import logoOficial from '@/assets/logo/logooficial.png'
 import { formatPhone } from '@/utils/formatters'
 
-const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533999186633'
-const WA_NUMBER_2 = import.meta.env.VITE_WHATSAPP_NUMBER_2 || '5533991060488'
+const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533991060488'
 const IG_USER = import.meta.env.VITE_INSTAGRAM_USER || 'umadgov'
 
 export default function Footer() {
@@ -70,12 +69,6 @@ export default function Footer() {
                 <Phone size={16} className="text-dourado-400 shrink-0" />
                 <a href={`tel:+${WA_NUMBER}`} className="hover:text-dourado-400 transition-colors">
                   {formatPhone(WA_NUMBER.replace(/^55/, ''))}
-                </a>
-              </li>
-              <li className="flex items-center gap-2 text-lavanda-400 text-sm">
-                <Phone size={16} className="text-dourado-400 shrink-0" />
-                <a href={`tel:+${WA_NUMBER_2}`} className="hover:text-dourado-400 transition-colors">
-                  {formatPhone(WA_NUMBER_2.replace(/^55/, ''))}
                 </a>
               </li>
               <li className="flex items-start gap-2 text-lavanda-400 text-sm">

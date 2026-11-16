@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { MessageCircle, X } from 'lucide-react'
 
-const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533999186633'
+const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533991060488'
 const WA_MSG = encodeURIComponent('A paz do Senhor! Tudo bem? Tenho dúvidas em relação à compra das camisas, poderia me ajudar?')
 
 export default function WhatsAppButton() {

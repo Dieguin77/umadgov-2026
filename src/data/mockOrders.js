@@ -54,7 +54,7 @@ export const mockOrders = [
     id: 'order_1748480000_abc1234',
     numeroPedido: formatOrderNumber(1),
     nome: 'Ana Paula Rodrigues',
-    telefone: '(33) 99918-6633',
+    telefone: '(33) 99900-4321',
     congregacao: 'Sede Central',
     tamanho: 'M',
     shirtModel: 'masculino',

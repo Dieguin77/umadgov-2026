@@ -1,10 +1,9 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { Instagram, Phone, MapPin, Clock, MessageCircle } from 'lucide-react'
+import { Instagram, MapPin, Clock, MessageCircle } from 'lucide-react'
 import { formatPhone } from '@/utils/formatters'
 
-const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533999186633'
-const WA_NUMBER_2 = import.meta.env.VITE_WHATSAPP_NUMBER_2 || '5533991060488'
+const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533991060488'
 const IG_USER = import.meta.env.VITE_INSTAGRAM_USER || 'umadgov'
 const WA_MSG = encodeURIComponent('Olá! Gostaria de saber mais sobre a camisa da UMADGOV 2026.')
 
@@ -28,7 +27,7 @@ export default function ContactSection() {
           <p className="text-lavanda-500">Dúvidas? Entre em contato pelos nossos canais.</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {[
             {
               icon: Instagram,
@@ -47,20 +46,12 @@ export default function ContactSection() {
               delay: 0.1,
             },
             {
-              icon: Phone,
-              title: 'Telefone',
-              value: formatPhone(WA_NUMBER_2.replace(/^55/, '')),
-              href: `tel:+${WA_NUMBER_2}`,
-              color: 'bg-lavanda-600',
-              delay: 0.2,
-            },
-            {
               icon: MapPin,
               title: 'Local de Retirada',
               value: 'Templo Sede | Centro',
               href: 'https://maps.google.com/?q=Rua+Afonso+Pena+3384+Governador+Valadares+MG',
               color: 'bg-dourado-500',
-              delay: 0.3,
+              delay: 0.2,
             },
           ].map(item => (
             <motion.a

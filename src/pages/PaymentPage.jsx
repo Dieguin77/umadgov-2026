@@ -10,7 +10,7 @@ import { formatCurrency } from '@/utils/formatters'
 
 // Mesma variável de ambiente usada em WhatsAppButton.jsx / ContactSection.jsx —
 // é o número de WhatsApp oficial do projeto, não um número novo.
-const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533999186633'
+const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '5533991060488'
 
 export default function PaymentPage() {
   const [params] = useSearchParams()
