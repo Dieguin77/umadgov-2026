@@ -218,6 +218,8 @@ RLS: leitura, inserção e atualização públicas (`USING (true)` / `WITH CHECK
 | `VITE_SUPABASE_STORAGE_BUCKET` | ✅ | `src/lib/supabase.js` | fallback hardcoded (`comprovantes`) se ausente |
 | `VITE_INSTAGRAM_USER` | ✅ | `ContactSection.jsx`, `Footer.jsx` | fallback hardcoded (`umadgov`) se ausente |
 | `VITE_SHIRT_PRICE` | ✅ | `src/data/mockOrders.js` | fallback hardcoded (`50`) se ausente |
+| `INFINITEPAY_HANDLE` | ✅ | `api/infinitepay/*.js` | só servidor (Vercel); InfiniteTag sem `$` |
+| `SUPABASE_SERVICE_ROLE_KEY` | ✅ | `api/infinitepay/*.js` | **secreta**, só servidor (Vercel), nunca com prefixo `VITE_`. É a única chave que pode marcar pedido como pago (`mark_pedido_pago_infinitepay`) e ler telefone/nome completo para o checkout |
 
 > **Número de contato:** o único número do site (botão do WhatsApp, seção de
 > contato, rodapé e envio de comprovante) é a constante `WA_NUMBER` de
