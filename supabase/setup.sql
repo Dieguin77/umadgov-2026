@@ -1,7 +1,11 @@
 -- ================================================================
+-- ⚠️ OBSOLETO — NÃO EXECUTE. Versão antiga do setup de autenticação,
+-- mantida só como histórico. O script em uso é ../supabase-setup.sql
+-- (e as correções em supabase/migrations/). Este arquivo usa outro
+-- formato da tabela profiles e deixava cada usuário alterar o próprio
+-- perfil (inclusive o role) — as policies de escrita foram removidas.
+-- ================================================================
 -- UMADGOV 2026 — Supabase Auth Setup
--- Execute este script no SQL Editor do painel Supabase:
--- https://app.supabase.com → seu projeto → SQL Editor
 -- ================================================================
 
 
@@ -31,17 +35,8 @@ CREATE POLICY "profiles_select_own"
   TO authenticated
   USING (auth.uid() = id);
 
--- Cada usuário pode inserir apenas seu próprio perfil
-CREATE POLICY "profiles_insert_own"
-  ON profiles FOR INSERT
-  TO authenticated
-  WITH CHECK (auth.uid() = id);
-
--- Cada usuário pode atualizar apenas seu próprio perfil
-CREATE POLICY "profiles_update_own"
-  ON profiles FOR UPDATE
-  TO authenticated
-  USING (auth.uid() = id);
+-- (Removidas as policies profiles_insert_own e profiles_update_own: com
+-- elas, qualquer conta gravava role = 'admin' no próprio perfil.)
 
 
 -- ================================================================

@@ -82,6 +82,8 @@ npm run dev
 | `VITE_SUPABASE_STORAGE_BUCKET` | Não | Bucket de comprovantes | `comprovantes` |
 | `VITE_INSTAGRAM_USER` | Não | Usuário do Instagram exibido no rodapé | `umadgov` |
 | `VITE_SHIRT_PRICE` | Não | Preço unitário da camisa (R$) | `50` |
+| `INFINITEPAY_HANDLE` | Só para cartão | InfiniteTag da conta InfinitePay (sem `$`). Só nas funções `/api`, na Vercel | — |
+| `SUPABASE_SERVICE_ROLE_KEY` | Só para cartão | Chave **secreta** do Supabase, usada só pelas funções `/api` (checkout e webhook da InfinitePay). Só na Vercel; nunca com prefixo `VITE_` | — |
 
 > O número de contato do site (botão de WhatsApp, contato, rodapé e envio de comprovante) não é variável de ambiente: fica em `src/data/contact.js`.
 

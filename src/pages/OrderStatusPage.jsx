@@ -162,7 +162,6 @@ export default function OrderStatusPage() {
                     { l: 'Tamanho', v: order.tamanho },
                     { l: 'Quantidade', v: `${order.quantidade}x` },
                     { l: 'Valor', v: formatCurrency(order.valor) },
-                    { l: 'Congregação', v: order.congregacao },
                     { l: 'Pagamento', v: FORMA_PAGAMENTO_LABELS[order.formaPagamento] || 'PIX' },
                     { l: 'Data', v: formatDateTime(order.createdAt) },
                   ].map(item => (

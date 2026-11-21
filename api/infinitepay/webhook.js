@@ -1,7 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
+// Chave secreta, só do servidor (env da Vercel, sem prefixo VITE_). No
+// banco, mark_pedido_pago_infinitepay só pode ser executada pela
+// service_role — com a chave anon, qualquer pessoa marcaria pedidos como pagos.
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 // A InfinitePay não assina o payload do webhook (não há header de
 // autenticidade documentado). Por isso este handler NUNCA aprova um pedido
@@ -16,7 +19,7 @@ export default async function handler(req, res) {
   }
 
   const handle = process.env.INFINITEPAY_HANDLE
-  if (!supabaseUrl || !supabaseAnonKey || !handle) {
+  if (!supabaseUrl || !supabaseServiceKey || !handle) {
     console.error('InfinitePay webhook: variáveis de ambiente ausentes')
     return res.status(500).end()
   }
@@ -57,7 +60,9 @@ export default async function handler(req, res) {
   const valorPagoCentavos = check.paid_amount ?? payload.paid_amount ?? 0
   const valorPago = Number(valorPagoCentavos) / 100
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey)
+  const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
   const { error } = await supabase.rpc('mark_pedido_pago_infinitepay', {
     p_numero_pedido: orderNsu,
     p_transaction_nsu: transactionNsu,
