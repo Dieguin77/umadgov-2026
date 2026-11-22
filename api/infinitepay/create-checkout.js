@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY
+// Chave secreta, só do servidor (env da Vercel, sem prefixo VITE_). A
+// consulta pública get_pedido_by_numero não devolve mais telefone nem nome
+// completo, que a InfinitePay usa para pré-preencher o checkout — por isso
+// esta função lê o pedido direto da tabela com a service_role.
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -10,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   const handle = process.env.INFINITEPAY_HANDLE
-  if (!supabaseUrl || !supabaseAnonKey || !handle) {
+  if (!supabaseUrl || !supabaseServiceKey || !handle) {
     console.error('InfinitePay: variáveis de ambiente ausentes (Supabase ou INFINITEPAY_HANDLE)')
     return res.status(500).json({ error: 'Pagamento por cartão indisponível no momento' })
   }
@@ -20,15 +24,20 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'numeroPedido é obrigatório' })
   }
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey)
+  const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
 
-  const { data, error } = await supabase.rpc('get_pedido_by_numero', { p_numero: numeroPedido })
+  const { data: pedido, error } = await supabase
+    .from('pedidos')
+    .select('numeroPedido, status, valor, quantidade, nome, telefone')
+    .eq('numeroPedido', numeroPedido)
+    .maybeSingle()
   if (error) {
     console.error('Erro ao buscar pedido para checkout InfinitePay:', error)
     return res.status(500).json({ error: 'Erro ao buscar pedido' })
   }
 
-  const pedido = data?.[0]
   if (!pedido) {
     return res.status(404).json({ error: 'Pedido não encontrado' })
   }

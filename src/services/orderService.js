@@ -52,8 +52,11 @@ export const orderService = {
 
   // Usa a função SECURITY DEFINER get_pedido_by_numero (não SELECT direto na
   // tabela): a policy RLS de SELECT é restrita a admin/moderador, então a
-  // consulta pública do cliente final passa por essa função, que só expõe o
-  // pedido daquele número específico — nunca a tabela inteira.
+  // consulta pública do cliente final passa por essa função. Como o número
+  // do pedido é sequencial (qualquer um consegue chutar), ela devolve só o
+  // necessário para acompanhar o pedido: primeiro nome, modelo, tamanho,
+  // quantidade, valor, forma de pagamento, status e data — sem telefone nem
+  // congregação.
   async getOrderByNumber(numeroPedido) {
     if (isSupabaseConfigured) {
       const { data, error } = await supabase
@@ -158,6 +161,11 @@ export const orderService = {
     return true
   },
 
+  // DESLIGADO desde 20/09/2026: o comprovante vai pelo WhatsApp e o
+  // ReceiptUpload não é usado em nenhuma página. No banco, a função
+  // update_comprovante_by_numero não tem mais grant para anon (ver
+  // supabase-setup.sql), então esta chamada falha se for religada sem
+  // uma versão nova e segura da função.
   // Apenas registra o arquivo enviado pelo cliente para conferência manual;
   // não confirma pagamento nem valida o pedido (isso é feito via updateOrderStatus).
   // Usa a função SECURITY DEFINER update_comprovante_by_numero (não UPDATE

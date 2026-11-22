@@ -23,24 +23,29 @@ DROP POLICY IF EXISTS "profiles_select_own" ON public.profiles;
 CREATE POLICY "profiles_select_own" ON public.profiles
   FOR SELECT USING (auth.uid() = id);
 
+-- Sem policy de INSERT/UPDATE: o site só LÊ o próprio perfil, e quem cria o
+-- perfil é o trigger abaixo. Uma policy de escrita deixaria qualquer conta
+-- gravar role = 'admin' no próprio perfil.
 DROP POLICY IF EXISTS "profiles_insert_own" ON public.profiles;
-CREATE POLICY "profiles_insert_own" ON public.profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
+DROP POLICY IF EXISTS "profiles_update_own" ON public.profiles;
 
--- Trigger: cria perfil automaticamente ao cadastrar um novo usuário
+-- Trigger: cria perfil automaticamente ao cadastrar um novo usuário.
+-- O role NUNCA vem do cadastro (raw_user_meta_data é controlado por quem se
+-- cadastra): fica no DEFAULT da coluna ('user'). Promover a admin/moderador
+-- é sempre manual (ver o fim deste arquivo).
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
 BEGIN
-  INSERT INTO public.profiles (id, nome, role)
-  VALUES (
-    NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'nome', NEW.email),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'user')
-  )
+  INSERT INTO public.profiles (id, nome)
+  VALUES (NEW.id, COALESCE(NEW.raw_user_meta_data->>'nome', NEW.email))
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
@@ -173,10 +178,8 @@ CREATE POLICY "pedidos_select_admin" ON public.pedidos
 -- devolve a linha sem depender de RLS.
 DROP POLICY IF EXISTS "pedidos_insert_public" ON public.pedidos;
 
--- Policy: atualização restrita a admin/moderador autenticado. O envio de
--- comprovante pelo cliente final passa pela função
--- update_comprovante_by_numero() abaixo (SECURITY DEFINER), que só altera os
--- campos de comprovante do próprio pedido — nunca a tabela inteira.
+-- Policy: atualização restrita a admin/moderador autenticado. O cliente
+-- final não altera pedido nenhum (o comprovante vai pelo WhatsApp).
 DROP POLICY IF EXISTS "pedidos_update_public" ON public.pedidos;
 DROP POLICY IF EXISTS "pedidos_update_admin" ON public.pedidos;
 CREATE POLICY "pedidos_update_admin" ON public.pedidos
@@ -204,9 +207,11 @@ CREATE POLICY "pedidos_delete_admin" ON public.pedidos
 -- 3b. FUNÇÕES PÚBLICAS (SECURITY DEFINER)
 --    Substituem o antigo acesso direto (SELECT/UPDATE) da chave anon à
 --    tabela inteira: expõem só a operação pontual que o cliente final
---    precisa — consultar o PRÓPRIO pedido pelo número, ou enviar o
---    comprovante do PRÓPRIO pedido — sem permitir leitura/gravação de
---    pedidos de outras pessoas.
+--    precisa — criar o pedido e acompanhar o status pelo número.
+--    Atenção: o número do pedido é sequencial (UMD-2026-0001, 0002...),
+--    então qualquer função pública que receba só o número precisa tratar
+--    o número como público — nunca devolver telefone, congregação ou
+--    nome completo, e nunca alterar o pedido.
 -- ==========================
 
 CREATE OR REPLACE FUNCTION public.create_pedido(
@@ -239,18 +244,54 @@ $$;
 REVOKE ALL ON FUNCTION public.create_pedido(TEXT, TEXT, TEXT, TEXT, TEXT, INTEGER, NUMERIC, TEXT, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.create_pedido(TEXT, TEXT, TEXT, TEXT, TEXT, INTEGER, NUMERIC, TEXT, TEXT) TO anon, authenticated;
 
-CREATE OR REPLACE FUNCTION public.get_pedido_by_numero(p_numero TEXT)
-RETURNS SETOF public.pedidos
+-- Consulta pública (páginas /consulta e /enviar-comprovante): só o que o
+-- cliente precisa para acompanhar o pedido. Sem telefone, congregação,
+-- comprovante, observações nem nome completo (só o primeiro nome).
+-- DROP + CREATE porque CREATE OR REPLACE não troca o tipo de retorno de
+-- bancos que ainda têm a versão antiga (RETURNS SETOF pedidos).
+DROP FUNCTION IF EXISTS public.get_pedido_by_numero(TEXT);
+
+CREATE FUNCTION public.get_pedido_by_numero(p_numero TEXT)
+RETURNS TABLE (
+  "numeroPedido"   TEXT,
+  status           TEXT,
+  nome             TEXT,
+  "shirtModel"     TEXT,
+  tamanho          TEXT,
+  quantidade       INTEGER,
+  valor            NUMERIC,
+  "formaPagamento" TEXT,
+  "createdAt"      TIMESTAMPTZ
+)
 LANGUAGE sql
+STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT * FROM public.pedidos WHERE "numeroPedido" = p_numero;
+  SELECT
+    p."numeroPedido",
+    p.status,
+    split_part(btrim(p.nome), ' ', 1),  -- só o primeiro nome
+    p."shirtModel",
+    p.tamanho,
+    p.quantidade,
+    p.valor,
+    p."formaPagamento",
+    p."createdAt"
+  FROM public.pedidos p
+  WHERE p."numeroPedido" = p_numero;
 $$;
 
 REVOKE ALL ON FUNCTION public.get_pedido_by_numero(TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.get_pedido_by_numero(TEXT) TO anon, authenticated;
 
+-- Envio de comprovante pelo site: DESLIGADO desde 20/09/2026 (o comprovante
+-- vai pelo WhatsApp; ReceiptUpload não é usado em nenhuma página). A função
+-- fica só para o código antigo, SEM grant para anon/authenticated: aberta,
+-- ela deixava qualquer pessoa trocar o comprovante e voltar o status de
+-- qualquer pedido pelo número, e devolvia a linha inteira. Para religar o
+-- upload, crie uma versão que exija algo além do número (ex.: o telefone) e
+-- devolva só o status.
 CREATE OR REPLACE FUNCTION public.update_comprovante_by_numero(p_numero TEXT, p_comprovante TEXT)
 RETURNS SETOF public.pedidos
 LANGUAGE sql
@@ -265,8 +306,7 @@ AS $$
   RETURNING *;
 $$;
 
-REVOKE ALL ON FUNCTION public.update_comprovante_by_numero(TEXT, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.update_comprovante_by_numero(TEXT, TEXT) TO anon, authenticated;
+REVOKE ALL ON FUNCTION public.update_comprovante_by_numero(TEXT, TEXT) FROM PUBLIC, anon, authenticated;
 
 -- Ponto único de confirmação automática de pagamento por cartão
 -- (InfinitePay). Chamada pela serverless function api/infinitepay/webhook.js
@@ -276,6 +316,10 @@ GRANT EXECUTE ON FUNCTION public.update_comprovante_by_numero(TEXT, TEXT) TO ano
 -- notificação repetida (a InfinitePay reenvia em caso de erro) não tem
 -- efeito, e nunca retrocede um pedido que já avançou no fluxo (ex.: já
 -- separado para retirada).
+-- Só a service_role executa: o webhook usa SUPABASE_SERVICE_ROLE_KEY (env
+-- da Vercel, nunca no front-end). Com grant para anon, qualquer pessoa
+-- chamava /rest/v1/rpc/mark_pedido_pago_infinitepay direto e marcava
+-- qualquer pedido como pago.
 CREATE OR REPLACE FUNCTION public.mark_pedido_pago_infinitepay(
   p_numero_pedido TEXT,
   p_transaction_nsu TEXT,
@@ -297,8 +341,8 @@ AS $$
   RETURNING *;
 $$;
 
-REVOKE ALL ON FUNCTION public.mark_pedido_pago_infinitepay(TEXT, TEXT, NUMERIC, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.mark_pedido_pago_infinitepay(TEXT, TEXT, NUMERIC, TEXT) TO anon, authenticated;
+REVOKE ALL ON FUNCTION public.mark_pedido_pago_infinitepay(TEXT, TEXT, NUMERIC, TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.mark_pedido_pago_infinitepay(TEXT, TEXT, NUMERIC, TEXT) TO service_role;
 
 
 -- ==========================
@@ -307,19 +351,21 @@ GRANT EXECUTE ON FUNCTION public.mark_pedido_pago_infinitepay(TEXT, TEXT, NUMERI
 --    (dashboard cria automático; SQL não cria)
 -- ==========================
 
--- profiles: authenticated pode ler o próprio perfil e inserir. anon nao
--- precisa de nenhum grant aqui: as tres operacoes publicas (criar pedido,
--- consultar, enviar comprovante) passam por funcoes SECURITY DEFINER que
--- ignoram a RLS de pedidos inteiramente, entao nunca chegam a avaliar o
--- EXISTS contra profiles das policies pedidos_select_admin/pedidos_update_admin.
-GRANT SELECT, INSERT, UPDATE ON public.profiles TO authenticated;
+-- profiles: authenticated só LÊ o próprio perfil (policy profiles_select_own).
+-- Sem INSERT/UPDATE: o perfil é criado pelo trigger handle_new_user, e
+-- escrita pela API permitiria gravar role = 'admin'. anon nao precisa de
+-- nenhum grant aqui: as operacoes publicas (criar pedido, consultar) passam
+-- por funcoes SECURITY DEFINER que ignoram a RLS de pedidos inteiramente,
+-- entao nunca chegam a avaliar o EXISTS contra profiles das policies
+-- pedidos_select_admin/pedidos_update_admin.
+REVOKE INSERT, UPDATE, DELETE ON public.profiles FROM anon, authenticated;
+GRANT SELECT ON public.profiles TO authenticated;
 
--- pedidos: anon nao tem NENHUM grant direto na tabela — criar pedido,
--- consultar e enviar comprovante passam inteiramente pelas funções
--- SECURITY DEFINER acima (create_pedido, get_pedido_by_numero,
--- update_comprovante_by_numero), que ignoram RLS e nao dependem de GRANT de
--- tabela para o caller. authenticated (admin/moderador) tem acesso total via
--- policy.
+-- pedidos: anon nao tem NENHUM grant direto na tabela — criar pedido e
+-- consultar passam inteiramente pelas funções SECURITY DEFINER acima
+-- (create_pedido, get_pedido_by_numero), que ignoram RLS e nao dependem de
+-- GRANT de tabela para o caller. authenticated (admin/moderador) tem acesso
+-- total via policy.
 REVOKE SELECT, INSERT, UPDATE ON public.pedidos FROM anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.pedidos TO authenticated;
 
@@ -350,34 +396,41 @@ UPDATE storage.buckets
 SET allowed_mime_types = ARRAY['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
 WHERE id = 'comprovantes';
 
--- Policy: upload público (clientes enviam sem login)
+-- Sem upload público: o envio de comprovante pelo site está desligado desde
+-- 20/09/2026 (vai pelo WhatsApp). As policies antigas de INSERT/UPDATE
+-- públicos deixavam qualquer pessoa gravar arquivos no bucket.
 DROP POLICY IF EXISTS "comprovantes_insert_public" ON storage.objects;
-CREATE POLICY "comprovantes_insert_public" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'comprovantes');
-
--- Policy: upsert público (o app usa upsert:true no upload; sem esta
--- policy, uma segunda gravação no mesmo caminho — ex.: retry de rede
--- instável ou duplo toque no mobile — vira um UPDATE bloqueado por RLS
--- com o erro "new row violates row-level security policy")
 DROP POLICY IF EXISTS "comprovantes_update_public" ON storage.objects;
-CREATE POLICY "comprovantes_update_public" ON storage.objects
-  FOR UPDATE USING (bucket_id = 'comprovantes')
-  WITH CHECK (bucket_id = 'comprovantes');
+DROP POLICY IF EXISTS "upload_comprovante" ON storage.objects;
 
--- Policy: leitura para usuário autenticado (admin vê via URL assinada)
+-- Policy: leitura só para admin/moderador (admin vê via URL assinada).
+-- Não basta estar logado: qualquer pessoa consegue criar uma conta.
+DROP POLICY IF EXISTS "view_comprovante" ON storage.objects;
 DROP POLICY IF EXISTS "comprovantes_select_auth" ON storage.objects;
-CREATE POLICY "comprovantes_select_auth" ON storage.objects
-  FOR SELECT USING (
+DROP POLICY IF EXISTS "comprovantes_select_admin" ON storage.objects;
+CREATE POLICY "comprovantes_select_admin" ON storage.objects
+  FOR SELECT TO authenticated
+  USING (
     bucket_id = 'comprovantes'
-    AND auth.role() = 'authenticated'
+    AND EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid()
+        AND role IN ('admin', 'moderador')
+    )
   );
 
--- Policy: exclusão para admin/moderador
+-- Policy: exclusão só para admin/moderador
+DROP POLICY IF EXISTS "comprovantes_delete_auth" ON storage.objects;
 DROP POLICY IF EXISTS "comprovantes_delete_admin" ON storage.objects;
 CREATE POLICY "comprovantes_delete_admin" ON storage.objects
-  FOR DELETE USING (
+  FOR DELETE TO authenticated
+  USING (
     bucket_id = 'comprovantes'
-    AND auth.role() = 'authenticated'
+    AND EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid()
+        AND role IN ('admin', 'moderador')
+    )
   );
 
 
